@@ -6,6 +6,7 @@ import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../
 import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, LOYALTY_VALUE } from "../../utils/loyalty";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
+import WishlistSection from "../Favorites/WishlistSection";
 import {
   CartOverlay,
   CartAside,
@@ -172,6 +173,7 @@ const CartDrawer = () => {
               ))}
             </>
           )}
+          <WishlistSection />
         </CartBody>
         {items.length > 0 && (
           <CartFooter>

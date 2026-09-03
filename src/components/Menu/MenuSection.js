@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ProductCard,
   ProductImg,
@@ -10,6 +10,7 @@ import {
 } from "../Products/ProductElements";
 import { useCart } from "../../context/CartContext";
 import { CATEGORIES } from "../Products/data";
+import { getFavorites, toggleFavorite } from "../../utils/favorites";
 import ProductModal from "./ProductModal";
 import {
   MenuSection,
@@ -39,6 +40,17 @@ const MenuExperience = ({ heading, products, id }) => {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
   const [selected, setSelected] = useState(null);
+  const [favorites, setFavorites] = useState(() => getFavorites());
+  const [savedOnly, setSavedOnly] = useState(false);
+
+  useEffect(() => {
+    const onFav = (e) => {
+      if (e && e.detail) setFavorites(e.detail);
+      else setFavorites(getFavorites());
+    };
+    window.addEventListener("sd:favorites", onFav);
+    return () => window.removeEventListener("sd:favorites", onFav);
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -48,10 +60,11 @@ const MenuExperience = ({ heading, products, id }) => {
         !q ||
         (p.name || "").toLowerCase().includes(q) ||
         (p.desc || "").toLowerCase().includes(q);
-      return matchCat && matchQ;
+      const matchFav = !savedOnly || favorites.includes(p.id);
+      return matchCat && matchQ && matchFav;
     });
     return sortProducts(list, sort);
-  }, [products, category, query, sort]);
+  }, [products, category, query, sort, savedOnly, favorites]);
 
   return (
     <MenuSection id={id || "menu"} aria-label="Bakery menu">
@@ -73,6 +86,15 @@ const MenuExperience = ({ heading, products, id }) => {
               {c.label}
             </TabButton>
           ))}
+          <TabButton
+            role="tab"
+            aria-selected={savedOnly}
+            active={savedOnly}
+            onClick={() => setSavedOnly((s) => !s)}
+            aria-label={`Show saved only, ${favorites.length} items`}
+          >
+            ♥ Saved ({favorites.length})
+          </TabButton>
         </Tabs>
       </Controls>
       <Controls>
@@ -107,8 +129,35 @@ const MenuExperience = ({ heading, products, id }) => {
         {category !== "all" ? ` in ${category}` : ""}
       </ResultCount>
       <Grid>
-        {filtered.map((product) => (
-          <ProductCard key={product.id}>
+        {filtered.map((product) => {
+          const fav = favorites.includes(product.id);
+          return (
+          <ProductCard key={product.id} style={{ position: "relative" }}>
+            <button
+              type="button"
+              onClick={() => {
+                const next = toggleFavorite(product.id);
+                setFavorites(next);
+              }}
+              aria-label={fav ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
+              aria-pressed={fav}
+              style={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                zIndex: 2,
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: "1px solid rgba(255,255,255,.3)",
+                background: fav ? "#e3c987" : "rgba(0,0,0,.55)",
+                color: fav ? "#111" : "#fff",
+                fontSize: "1.1rem",
+                cursor: "pointer",
+              }}
+            >
+              {fav ? "♥" : "♡"}
+            </button>
             <button
               type="button"
               onClick={() => setSelected(product)}
@@ -168,7 +217,8 @@ const MenuExperience = ({ heading, products, id }) => {
               </button>
             </ProductInfo>
           </ProductCard>
-        ))}
+          );
+        })}
       </Grid>
       {filtered.length === 0 && (
         <EmptyState>
