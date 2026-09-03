@@ -2,13 +2,14 @@ import styled from "styled-components";
 import ImgBg from "../../images/bgprod.jpg";
 
 export const ProductContainer = styled.div`
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   background-color: black;
   background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1)),
     url(${ImgBg});
-  padding: 5rem calc((100vw - 1300px) / 2);
+  padding: 5rem clamp(1rem, 4vw, calc((1300px - 100%) / 2));
   color: #fff;
+  box-sizing: border-box;
 `;
 
 export const ProductWrapper = styled.div`
@@ -19,16 +20,24 @@ export const ProductWrapper = styled.div`
 `;
 
 export const ProductCard = styled.div`
-  margin: 0 2rem;
+  margin: 0 1rem;
   padding-bottom: 50px;
   line-height: 2;
   width: 300px;
+  max-width: 100%;
+  box-sizing: border-box;
+  @media screen and (max-width: 480px) {
+    width: 100%;
+    margin: 0;
+  }
 `;
 
 export const ProductImg = styled.img`
   height: 300px;
-  min-width: 300px;
+  min-width: 0;
+  width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
   /* box-shadow: 8px 8px #fdc500; */
   box-shadow: 3px 5px 35px #e3c987;
   &:hover {

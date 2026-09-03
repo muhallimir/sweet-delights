@@ -5,19 +5,19 @@ import { FaTimes } from "react-icons/fa";
 export const SideBarContainer = styled.div`
   position: fixed;
   z-index: 999;
-  width: 280px;
+  width: 100%;
   height: 100%;
-  /* background: #ffc500; */
   background: #e3c987;
   display: grid;
   align-items: center;
   top: 0;
-  transition: 0.3s ease-in-out;
-  /* if else */
-  right: ${({ isOpen }) => (isOpen ? "0" : "-1000px")};
+  right: 0;
+  transition: transform 0.3s ease-in-out;
+  transform: ${({ isOpen }) => (isOpen ? "translateX(0)" : "translateX(100%)")};
+  overflow-y: auto;
 
-  @media screen and (max-width: 400px) {
-    width: 100%;
+  @media screen and (min-width: 481px) {
+    width: 320px;
   }
 `;
 

@@ -5,16 +5,17 @@ export const HeroContainer = styled.div`
   background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1)),
     url(${ImgBg});
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   background-position: center;
   background-size: cover;
+  overflow: hidden;
 `;
 
 export const HeroContent = styled.div`
   height: calc(100vh - 80px);
   max-height: 100%;
-  width: 100vw;
-  padding: 0rem calc((100vw - 1300px) / 2);
+  width: 100%;
+  padding: 0rem clamp(1rem, 4vw, calc((1300px - 100%) / 2));
 `;
 
 export const HeroItems = styled.div`
@@ -39,9 +40,10 @@ export const HeroItems = styled.div`
 export const HeroTitle = styled.div`
   font-size: clamp(2rem, 10vw, 5rem);
   margin-bottom: 1rem;
-  box-shadow: 3px 5px 35px #e3c987;
+  box-shadow: 3px 5px 25px rgba(227, 201, 135, 0.55);
   border-radius: 1rem;
-  padding-left: 1rem;
+  padding: 0.5rem 0 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
 
   letter-spacing: 3px;
 `;

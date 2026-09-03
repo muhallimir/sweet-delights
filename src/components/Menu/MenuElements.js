@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const MenuSection = styled.section`
   width: 100%;
   background-color: black;
-  padding: 5rem calc((100vw - 1300px) / 2);
+  padding: 5rem clamp(1rem, 4vw, calc((1300px - 100%) / 2));
   color: #fff;
 `;
 
