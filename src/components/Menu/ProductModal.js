@@ -6,6 +6,7 @@ import Reviews from "../Reviews/Reviews";
 import NutritionModal from "../Nutrition/NutritionModal";
 import PreorderToggle from "../Preorder/PreorderToggle";
 import AllergenSubstitution from "../Allergens/AllergenSubstitution";
+import MacroPie from "../Macros/MacroPie";
 import { substitutedAllergens } from "../../utils/allergenSubs";
 import { addScheduledItem, getScheduledItems } from "../../utils/scheduled";
 
@@ -235,6 +236,7 @@ const ProductModal = ({ product, onClose }) => {
             >
               View nutrition · {product.nutrition ? `${product.nutrition.calories} kcal` : ""}
             </button>
+            <MacroPie product={product} />
             <QtyRow>
               <button
                 type="button"
