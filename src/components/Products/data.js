@@ -26,6 +26,8 @@ export const productData = [
     priceValue: 35,
     category: "sweets",
     button: "Add to cart",
+    rating: 4.9,
+    reviewsCount: 212,
   },
   {
     id: "coconut-macaroons",
@@ -37,6 +39,8 @@ export const productData = [
     priceValue: 60,
     category: "sweets",
     button: "Add to cart",
+    rating: 4.8,
+    reviewsCount: 186,
   },
   {
     id: "boracay-salad",
@@ -48,6 +52,8 @@ export const productData = [
     priceValue: 35,
     category: "sweets",
     button: "Add to cart",
+    rating: 4.7,
+    reviewsCount: 143,
   },
   {
     id: "combo-delights",
@@ -59,6 +65,8 @@ export const productData = [
     priceValue: 100,
     category: "combos",
     button: "Add to cart",
+    rating: 4.9,
+    reviewsCount: 231,
   },
   {
     id: "mojitos-drink",
@@ -70,6 +78,8 @@ export const productData = [
     priceValue: 75,
     category: "drinks",
     button: "Add to cart",
+    rating: 4.6,
+    reviewsCount: 98,
   },
 ];
 
@@ -84,6 +94,8 @@ export const productDataMeal = [
     priceValue: 95,
     category: "snacks",
     button: "Add to cart",
+    rating: 4.7,
+    reviewsCount: 167,
   },
   {
     id: "tuna-carbonara",
@@ -95,6 +107,8 @@ export const productDataMeal = [
     priceValue: 105,
     category: "snacks",
     button: "Add to cart",
+    rating: 4.8,
+    reviewsCount: 154,
   },
   {
     id: "pancit-palabok",
@@ -106,6 +120,8 @@ export const productDataMeal = [
     priceValue: 125,
     category: "snacks",
     button: "Add to cart",
+    rating: 4.9,
+    reviewsCount: 198,
   },
 ];
 

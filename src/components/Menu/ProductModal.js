@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useCart } from "../../context/CartContext";
 import { formatPeso } from "../../utils/format";
+import Reviews from "../Reviews/Reviews";
 
 const Overlay = styled.div`
   position: fixed;
@@ -208,6 +209,7 @@ const ProductModal = ({ product, onClose }) => {
             <AddBtn onClick={() => addToCart(product, qty)}>
               Add {qty} to cart · {formatPeso(unit * qty)}
             </AddBtn>
+            <Reviews product={product} />
           </Body>
         </Dialog>
       </div>

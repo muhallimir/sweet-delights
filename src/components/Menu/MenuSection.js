@@ -11,6 +11,7 @@ import {
 import { useCart } from "../../context/CartContext";
 import { CATEGORIES } from "../Products/data";
 import { getFavorites, toggleFavorite } from "../../utils/favorites";
+import { starText } from "../../utils/reviews";
 import ProductModal from "./ProductModal";
 import {
   MenuSection,
@@ -177,6 +178,9 @@ const MenuExperience = ({ heading, products, id }) => {
             </button>
             <ProductInfo>
               <ProductTitle>{product.name}</ProductTitle>
+              <div style={{ color: "#e3c987", fontSize: ".9rem" }} aria-label={`Rated ${product.rating || 5} out of 5`}>
+                {starText(product.rating || 5)} <span style={{ color: "#fff", opacity: 0.7, fontSize: ".8rem" }}>({product.reviewsCount || 0})</span>
+              </div>
               <ProductDesc>{product.desc}</ProductDesc>
               <ProductPrice>{product.price}</ProductPrice>
               <div style={{ display: "flex", gap: ".5rem" }}>
