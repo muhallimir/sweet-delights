@@ -126,10 +126,11 @@ const AddBtn = styled.button`
 const ProductModal = ({ product, onClose }) => {
   const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
+  const productId = product ? product.id : null;
 
   useEffect(() => {
     setQty(1);
-  }, [product && product.id]);
+  }, [productId]);
 
   useEffect(() => {
     const onKey = (e) => {

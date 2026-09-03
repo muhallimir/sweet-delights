@@ -24,6 +24,8 @@ export function useReveal(options) {
     );
     obs.observe(el);
     return () => obs.disconnect();
+    // options intentionally excluded: static threshold is fine for reveal
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return [ref, visible];

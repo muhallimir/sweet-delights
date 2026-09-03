@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+# Sweet Delights | Homemade Sweets and Fiesta Catering
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Bakery storefront for a Filipino homemade sweets business. Browse the menu, add to cart, check out with COD/GCash, inquire for catering, and join the newsletter. Built to impress clients and take real orders.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Persistent cart: add/remove/qty, drawer UI, subtotal + delivery + total, localStorage, navbar badge
+- Checkout flow: validated form (name/phone/address/payment mock), order summary, confirmation screen with order ID, cart clears, orders saved locally
+- Menu experience: category tabs (Sweets/Snacks/Drinks/Combos), live search, sort by price/name, product detail modal with qty selector and add-to-cart, quick-add
+- Social proof + lead capture: auto-advancing testimonials carousel with manual controls, newsletter signup with validation + localStorage + success state
+- UX polish: IntersectionObserver scroll-reveal, back-to-top button, 404 route, skip-to-menu link, focus states, alt text, aria labels, responsive layout
+- Catering/contact: inquiry form with validation + success toast + localStorage, hours + location block with map embed
+- SEO: title, description, OG/Twitter tags, canonical, JSON-LD Bakery schema
 
-### `npm start`
+## Screenshots
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Placeholders (add real shots to `docs/`):
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- `docs/screenshot-home.png` - hero + menu
+- `docs/screenshot-cart.png` - cart drawer open
+- `docs/screenshot-checkout.png` - checkout + confirmation
+- `docs/screenshot-catering.png` - catering form + map
 
-### `npm test`
+## Tech stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- React 17, react-scripts 4 (CRA), react-router-dom v5
+- styled-components, react-icons, react-typical
+- Zero new runtime dependencies (hand-rolled carousel, modal, reveal, toast)
+- Firebase Hosting (`firebase.json` rewrites SPA to `/index.html`)
 
-### `npm run build`
+## Getting started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Requirements: Node 16 (CRA 4 era). Node 18+ needs `NODE_OPTIONS=--openssl-legacy-provider` for build.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install --legacy-peer-deps
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Open http://localhost:3000
 
-### `npm run eject`
+## Scripts
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- `npm start` - dev server
+- `npm run build` - production build to `build/`
+- `npm test` - CRA test runner
+- `npx serve -s build` - preview production build locally
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Environment
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Copy `.env.example` to `.env` for local overrides. No secrets required; all checkout/catering is mock + localStorage.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```bash
+cp .env.example .env
+```
 
-## Learn More
+## Deployment to Firebase
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Project: `sweet-delights-c84a7` (see `.firebaserc`).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm run build
+npx firebase-tools deploy --only hosting
+# or: firebase deploy --only hosting
+```
 
-### Code Splitting
+SPA rewrite is already configured in `firebase.json`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Project structure
 
-### Analyzing the Bundle Size
+- `src/App.js` - routes (`/`, `/checkout`, 404), providers
+- `src/context/CartContext.js` - cart reducer + localStorage + drawer state
+- `src/components/Cart/` - drawer UI
+- `src/components/Checkout/` - checkout page + confirmation
+- `src/components/Menu/` - filter/search/sort + product modal
+- `src/components/Testimonials/`, `Newsletter/`, `Catering/`
+- `src/components/BackToTop/`, `NotFound/`, `Reveal/`, `hooks/useReveal.js`
+- `src/utils/format.js` - peso formatting, totals
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Roadmap
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Real backend orders (Firestore) + GCash deep link
+- Admin menu editor + order list
+- Delivery fee by barangay + pickup slots
+- PWA install + offline menu
+- Analytics + conversion events
