@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { GlobalStyle } from "./GlobalStyles";
 import Hero from "./components/Hero";
-import Products from "./components/Products";
-import { productData, productDataMeal } from "./components/Products/data";
+import { allProducts } from "./components/Products/data";
+import MenuExperience from "./components/Menu/MenuSection";
 import Featured from "./components/Featured";
 import Footer from "./components/Footer";
 import Typical from "react-typical";
@@ -14,28 +14,18 @@ function Home() {
   return (
     <>
       <Hero />
-      <Products
+      <MenuExperience
         id="menu"
         heading={
           <Typical
-            steps={["Pick your sweets", 900, "Message us now 🥰", 1000]}
+            steps={["Pick your sweets", 900, "Fresh daily 🥰", 1000]}
             loop={Infinity}
             wrapper="p"
           />
         }
-        data={productData}
+        products={allProducts}
       />
       <Featured />
-      <Products
-        heading={
-          <Typical
-            steps={["Snack Treats", 1000, "For you 😍", 1000]}
-            loop={Infinity}
-            wrapper="p"
-          />
-        }
-        data={productDataMeal}
-      />
       <Footer />
     </>
   );
