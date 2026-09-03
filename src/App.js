@@ -6,6 +6,7 @@ import MenuExperience from "./components/Menu/MenuSection";
 import Featured from "./components/Featured";
 import BestsellersRail from "./components/Bestsellers/BestsellersRail";
 import DailyDeal from "./components/Deal/DailyDeal";
+import BoxBuilder from "./components/BoxBuilder/BoxBuilder";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Newsletter from "./components/Newsletter/Newsletter";
 import Catering from "./components/Catering/Catering";
@@ -37,6 +38,7 @@ function Home() {
       </Reveal>
       <Featured />
       <DailyDeal />
+      <BoxBuilder />
       <Reveal>
         <BestsellersRail />
       </Reveal>
