@@ -22,12 +22,11 @@ function getOrders() {
   } catch (e) {
     return [];
   }
-}
-
-const AdminPage = () => {
+}const AdminPage = () => {
   const { format } = useCurrency();
   const [orders, setOrders] = useState(() => getOrders());
   const [statuses, setStatuses] = useState(() => getStatuses());
+  const [expanded, setExpanded] = useState(null);
 
   const setStatus = (id, status) => {
     const next = { ...statuses, [id]: status };
@@ -103,23 +102,49 @@ const AdminPage = () => {
                 <tbody>
                   {[...orders].reverse().map((o) => {
                     const st = statuses[o.id] || "placed";
+                    const isOpen = expanded === o.id;
+                    const driverNote = o.customer && o.customer.driverNote;
+                    const bakerNote = o.customer && o.customer.bakerNote;
                     return (
-                      <tr key={o.id} style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
-                        <td style={{ padding: ".5rem" }}>{o.id}<br /><span style={{ opacity: 0.6, fontSize: ".78rem" }}>{new Date(o.date).toLocaleString()}</span></td>
-                        <td style={{ padding: ".5rem" }}>{o.items.reduce((s, i) => s + (i.qty || 0), 0)}</td>
-                        <td style={{ padding: ".5rem" }}>{format(o.total)}</td>
-                        <td style={{ padding: ".5rem", textTransform: "capitalize" }}>{st}</td>
-                        <td style={{ padding: ".5rem" }}>
-                          <div style={{ display: "flex", gap: ".4rem" }}>
-                            <button type="button" onClick={() => setStatus(o.id, "fulfilled")} disabled={st === "fulfilled"} style={{ borderRadius: 999, border: "none", background: st === "fulfilled" ? "#555" : "#2f7a44", color: "#fff", padding: ".35rem .8rem", cursor: st === "fulfilled" ? "default" : "pointer", fontSize: ".8rem" }}>
-                              Fulfilled
-                            </button>
-                            <button type="button" onClick={() => setStatus(o.id, "cancelled")} disabled={st === "cancelled"} style={{ borderRadius: 999, border: "1px solid #ff9a9a", background: "transparent", color: "#ff9a9a", padding: ".35rem .8rem", cursor: st === "cancelled" ? "default" : "pointer", fontSize: ".8rem" }}>
-                              Cancel
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                      <React.Fragment key={o.id}>
+                        <tr style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
+                          <td style={{ padding: ".5rem" }}>{o.id}<br /><span style={{ opacity: 0.6, fontSize: ".78rem" }}>{new Date(o.date).toLocaleString()}</span></td>
+                          <td style={{ padding: ".5rem" }}>
+                            {o.items.reduce((s, i) => s + (i.qty || 0), 0)}
+                            {(driverNote || bakerNote) ? (
+                              <button
+                                type="button"
+                                onClick={() => setExpanded(isOpen ? null : o.id)}
+                                style={{ marginLeft: ".5rem", background: "transparent", border: "1px solid rgba(255,255,255,.3)", color: "#fff", borderRadius: 999, padding: ".15rem .6rem", fontSize: ".72rem", cursor: "pointer" }}
+                                aria-expanded={isOpen}
+                                aria-label={`Toggle notes for ${o.id}`}
+                              >
+                                {isOpen ? "Hide notes" : "Show notes"}
+                              </button>
+                            ) : null}
+                          </td>
+                          <td style={{ padding: ".5rem" }}>{format(o.total)}</td>
+                          <td style={{ padding: ".5rem", textTransform: "capitalize" }}>{st}</td>
+                          <td style={{ padding: ".5rem" }}>
+                            <div style={{ display: "flex", gap: ".4rem" }}>
+                              <button type="button" onClick={() => setStatus(o.id, "fulfilled")} disabled={st === "fulfilled"} style={{ borderRadius: 999, border: "none", background: st === "fulfilled" ? "#555" : "#2f7a44", color: "#fff", padding: ".35rem .8rem", cursor: st === "fulfilled" ? "default" : "pointer", fontSize: ".8rem" }}>
+                                Fulfilled
+                              </button>
+                              <button type="button" onClick={() => setStatus(o.id, "cancelled")} disabled={st === "cancelled"} style={{ borderRadius: 999, border: "1px solid #ff9a9a", background: "transparent", color: "#ff9a9a", padding: ".35rem .8rem", cursor: st === "cancelled" ? "default" : "pointer", fontSize: ".8rem" }}>
+                                Cancel
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        {isOpen && (driverNote || bakerNote) ? (
+                          <tr style={{ background: "#0f0f0f" }}>
+                            <td colSpan="5" style={{ padding: ".5rem .8rem", borderTop: "1px solid rgba(255,255,255,.05)" }}>
+                              {driverNote ? <div style={{ marginBottom: ".25rem" }}><strong style={{ color: "#a9c8e8" }}>Driver:</strong> {driverNote}</div> : null}
+                              {bakerNote ? <div><strong style={{ color: "#e3c987" }}>Baker:</strong> {bakerNote}</div> : null}
+                            </td>
+                          </tr>
+                        ) : null}
+                      </React.Fragment>
                     );
                   })}
                 </tbody>

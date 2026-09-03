@@ -10,6 +10,7 @@ import TierCard from "../Loyalty/TierCard";
 import { getScheduledItems, clearScheduledItems } from "../../utils/scheduled";
 import { formatScheduledFor } from "../../utils/preorder";
 import SmsOptIn from "../Sms/SmsOptIn";
+import { validateOrderNotes, normalizeNotes, NOTE_MAX, BAKER_NOTE_MAX } from "../../utils/orderNotes";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import FulfillmentPicker from "../Fulfillment/FulfillmentPicker";
@@ -79,7 +80,8 @@ const CheckoutPage = () => {
     name: "",
     phone: "",
     address: "",
-    notes: "",
+    driverNote: "",
+    bakerNote: "",
     payment: "Cash on Delivery",
     gcashRef: "",
   });
@@ -136,14 +138,20 @@ const CheckoutPage = () => {
     e.preventDefault();
     const errs = validate(values);
     const fErrs = validateFulfillment(fulfillment);
+    const noteErrs = validateOrderNotes(values);
     setErrors(errs);
     setFulErrors(fErrs);
-    setTouched({ name: true, phone: true, address: true, payment: true });
+    setTouched({ name: true, phone: true, address: true, payment: true, driverNote: true, bakerNote: true });
     if (Object.keys(errs).length > 0) return;
     if (Object.keys(fErrs).length > 0) return;
+    if (Object.keys(noteErrs).length > 0) {
+      setErrors((prev) => ({ ...prev, ...noteErrs }));
+      return;
+    }
     if (items.length === 0) return;
     setFulfillment(fulfillment);
     setGift(gift);
+    const notes = normalizeNotes(values.driverNote, values.bakerNote);
     const usedReward = loyaltyCalc.applied;
     const earned = earnForTotal(preGiftTotal);
     const finalFee = fulfillment.type === "pickup" || tierFreeDelivery ? 0 : promoCalc.fee;
@@ -152,7 +160,7 @@ const CheckoutPage = () => {
     const order = {
       id: makeOrderId(),
       date: new Date().toISOString(),
-      customer: { ...values },
+      customer: { ...values, driverNote: notes.driverNote, bakerNote: notes.bakerNote },
       fulfillment: { ...fulfillment },
       fulfillmentLabel: fulfillmentLabel(fulfillment),
       gift: { ...gift },
@@ -286,6 +294,18 @@ const CheckoutPage = () => {
                   {placedOrder.customer.address}
                 </span>
               </SummaryRow>
+              {placedOrder.customer.driverNote ? (
+                <SummaryRow>
+                  <span>Driver instructions</span>
+                  <span style={{ textAlign: "right", maxWidth: "60%" }}>{placedOrder.customer.driverNote}</span>
+                </SummaryRow>
+              ) : null}
+              {placedOrder.customer.bakerNote ? (
+                <SummaryRow>
+                  <span>Note to baker</span>
+                  <span style={{ textAlign: "right", maxWidth: "60%" }}>{placedOrder.customer.bakerNote}</span>
+                </SummaryRow>
+              ) : null}
               {placedOrder.promoDiscount > 0 && (
                 <SummaryRow>
                   <span>Promo ({placedOrder.promoCode})</span>
@@ -443,13 +463,46 @@ const CheckoutPage = () => {
             </Field>
           )}
           <Field>
-            <label htmlFor="co-notes">Notes (optional)</label>
+            <label htmlFor="co-driver">Driver instructions (delivery only, 0-200)</label>
             <textarea
-              id="co-notes"
-              placeholder="Landmark, preferred time, dedication message..."
-              value={values.notes}
-              onChange={set("notes")}
+              id="co-driver"
+              maxLength={NOTE_MAX}
+              placeholder="Gate code, look for the blue door, leave at reception..."
+              value={values.driverNote}
+              onChange={set("driverNote")}
+              onBlur={blur("driverNote")}
+              aria-invalid={Boolean(errors.driverNote)}
+              aria-describedby={errors.driverNote ? "co-driver-err" : undefined}
             />
+            <div style={{ fontSize: ".75rem", opacity: 0.7, marginTop: ".2rem" }}>
+              {values.driverNote.length}/{NOTE_MAX}
+            </div>
+            {errors.driverNote && (
+              <ErrorText id="co-driver-err" role="alert">
+                {errors.driverNote}
+              </ErrorText>
+            )}
+          </Field>
+          <Field>
+            <label htmlFor="co-baker">Note to baker (0-200)</label>
+            <textarea
+              id="co-baker"
+              maxLength={BAKER_NOTE_MAX}
+              placeholder="Less sugar please, write 'Happy Birthday Ana' on the cake..."
+              value={values.bakerNote}
+              onChange={set("bakerNote")}
+              onBlur={blur("bakerNote")}
+              aria-invalid={Boolean(errors.bakerNote)}
+              aria-describedby={errors.bakerNote ? "co-baker-err" : undefined}
+            />
+            <div style={{ fontSize: ".75rem", opacity: 0.7, marginTop: ".2rem" }}>
+              {values.bakerNote.length}/{BAKER_NOTE_MAX}
+            </div>
+            {errors.bakerNote && (
+              <ErrorText id="co-baker-err" role="alert">
+                {errors.bakerNote}
+              </ErrorText>
+            )}
           </Field>
           <GiftOptions value={gift} onChange={(v) => { setGiftState(v); setGift(v); }} />
           <PlaceOrderBtn
