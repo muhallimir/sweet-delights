@@ -8,6 +8,8 @@ import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import FulfillmentPicker from "../Fulfillment/FulfillmentPicker";
 import { getFulfillment, setFulfillment, validateFulfillment, fulfillmentLabel } from "../../utils/fulfillment";
+import GiftOptions from "../Gift/GiftOptions";
+import { getGift, setGift, GIFT_WRAP_PRICE } from "../../utils/gift";
 import {
   CheckoutWrap,
   CheckoutInner,
@@ -79,23 +81,28 @@ const CheckoutPage = () => {
   const [loyaltyRedeem, setLoyaltyRedeemState] = useState(() => getLoyaltyRedeem());
   const [fulfillment, setFulfillmentState] = useState(() => getFulfillment());
   const [fulErrors, setFulErrors] = useState({});
+  const [gift, setGiftState] = useState(() => getGift());
 
   useEffect(() => {
     setPromoCode(getStoredPromo());
     setLoyaltyBalanceState(getLoyaltyBalance());
     setLoyaltyRedeemState(getLoyaltyRedeem());
     setFulfillmentState(getFulfillment());
+    setGiftState(getGift());
   }, []);
 
   const baseFee = useMemo(() => deliveryFee(subtotal), [subtotal]);
   const promoCalc = useMemo(() => calcPromo(subtotal, baseFee, promoCode), [subtotal, baseFee, promoCode]);
   const afterPromo = promoCalc.total - promoCalc.fee;
   const loyaltyCalc = useMemo(() => calcLoyalty(afterPromo, loyaltyBalance, loyaltyRedeem), [afterPromo, loyaltyBalance, loyaltyRedeem]);
-  const fee = promoCalc.fee;
+  const deliveryFeeFinal = fulfillment.type === "pickup" ? 0 : promoCalc.fee;
   const promoDiscount = promoCalc.discount;
   const loyaltyDiscount = loyaltyCalc.discount;
-  const total = Math.max(0, promoCalc.total - loyaltyDiscount);
-  const earnPreview = earnForTotal(total);
+  const giftFee = gift.wrap ? GIFT_WRAP_PRICE : 0;
+  const fee = deliveryFeeFinal;
+  const preGiftTotal = Math.max(0, subtotal - promoDiscount - loyaltyDiscount + deliveryFeeFinal);
+  const total = preGiftTotal + giftFee;
+  const earnPreview = earnForTotal(preGiftTotal);
 
   const set = (k) => (e) => {
     const v = e.target.value;
@@ -121,14 +128,20 @@ const CheckoutPage = () => {
     if (Object.keys(fErrs).length > 0) return;
     if (items.length === 0) return;
     setFulfillment(fulfillment);
+    setGift(gift);
     const usedReward = loyaltyCalc.applied;
-    const earned = earnForTotal(total);
+    const earned = earnForTotal(preGiftTotal);
+    const finalFee = fulfillment.type === "pickup" ? 0 : promoCalc.fee;
+    const finalPreGift = Math.max(0, subtotal - promoDiscount - loyaltyDiscount + finalFee);
+    const finalTotal = finalPreGift + giftFee;
     const order = {
       id: makeOrderId(),
       date: new Date().toISOString(),
       customer: { ...values },
       fulfillment: { ...fulfillment },
       fulfillmentLabel: fulfillmentLabel(fulfillment),
+      gift: { ...gift },
+      giftFee,
       items: items.map((i) => ({ ...i })),
       subtotal,
       promoCode: promoCode || "",
@@ -136,8 +149,8 @@ const CheckoutPage = () => {
       loyaltyDiscount,
       loyaltyUsed: usedReward,
       loyaltyEarned: earned,
-      fee: fulfillment.type === "pickup" ? 0 : fee,
-      total: fulfillment.type === "pickup" ? Math.max(0, promoCalc.total - promoCalc.fee - loyaltyDiscount) : total,
+      fee: finalFee,
+      total: finalTotal,
     };
     try {
       const raw = localStorage.getItem("sweet-delights-orders");
@@ -186,14 +199,31 @@ const CheckoutPage = () => {
               </p>
             ) : null}
             <div style={{ marginTop: "1rem" }}>
+              {placedOrder.gift && placedOrder.gift.receipt ? (
+                <p style={{ background: "#14351f", border: "1px solid #2f7a44", borderRadius: ".7rem", padding: ".6rem .9rem" }}>
+                  Gift receipt · prices hidden{placedOrder.gift.message ? ` · “${placedOrder.gift.message}”` : ""}
+                </p>
+              ) : null}
               {placedOrder.items.map((i) => (
                 <SummaryRow key={i.id}>
                   <span>
                     {i.qty}× {i.name}
                   </span>
-                  <span>{formatPeso((i.priceValue || 0) * (i.qty || 0))}</span>
+                  <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : formatPeso((i.priceValue || 0) * (i.qty || 0))}</span>
                 </SummaryRow>
               ))}
+              {placedOrder.gift && placedOrder.gift.wrap ? (
+                <SummaryRow>
+                  <span>Gift wrap</span>
+                  <span>{placedOrder.gift.receipt ? "···" : formatPeso(placedOrder.giftFee || 0)}</span>
+                </SummaryRow>
+              ) : null}
+              {placedOrder.gift && placedOrder.gift.message && !(placedOrder.gift.receipt) ? (
+                <SummaryRow>
+                  <span>Gift message</span>
+                  <span style={{ textAlign: "right", maxWidth: "60%" }}>“{placedOrder.gift.message}”</span>
+                </SummaryRow>
+              ) : null}
               <SummaryRow>
                 <span>Deliver to</span>
                 <span style={{ textAlign: "right", maxWidth: "60%" }}>
@@ -209,12 +239,12 @@ const CheckoutPage = () => {
               {placedOrder.loyaltyDiscount > 0 && (
                 <SummaryRow>
                   <span>Loyalty reward</span>
-                  <span>−{formatPeso(placedOrder.loyaltyDiscount)}</span>
+                  <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : `−${formatPeso(placedOrder.loyaltyDiscount)}`}</span>
                 </SummaryRow>
               )}
               <TotalRow>
                 <span>Total</span>
-                <span>{formatPeso(placedOrder.total)}</span>
+                <span>{placedOrder.gift && placedOrder.gift.receipt ? "Gift · prices hidden" : formatPeso(placedOrder.total)}</span>
               </TotalRow>
               <p style={{ fontSize: ".9rem", opacity: 0.85 }}>
                 You earned {placedOrder.loyaltyEarned} pts. New balance: {placedOrder.loyaltyBalance} pts.
@@ -341,6 +371,7 @@ const CheckoutPage = () => {
               onChange={set("notes")}
             />
           </Field>
+          <GiftOptions value={gift} onChange={(v) => { setGiftState(v); setGift(v); }} />
           <PlaceOrderBtn
             type="submit"
             disabled={items.length === 0}
@@ -408,9 +439,15 @@ const CheckoutPage = () => {
                 </SummaryRow>
               )}
               <SummaryRow>
-                <span>Delivery</span>
+                <span>Delivery{fulfillment.type === "pickup" ? " (pickup FREE)" : ""}</span>
                 <span>{fee === 0 ? "FREE" : formatPeso(fee)}</span>
               </SummaryRow>
+              {giftFee > 0 && (
+                <SummaryRow>
+                  <span>Gift wrap</span>
+                  <span>{formatPeso(giftFee)}</span>
+                </SummaryRow>
+              )}
               <TotalRow>
                 <span>Total</span>
                 <span>{formatPeso(total)}</span>
