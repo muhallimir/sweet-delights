@@ -31,6 +31,9 @@ const SideBar = ({ isOpen, toggle }) => {
         <SideBarLink as="a" href="#catering" onClick={toggle}>
           Catering
         </SideBarLink>
+        <SideBarLink as={Link} to="/gift-cards" onClick={toggle}>
+          Gift Cards
+        </SideBarLink>
         <SideBarLink as={Link} to="/checkout" onClick={toggle}>
           Checkout
         </SideBarLink>

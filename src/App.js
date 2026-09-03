@@ -31,6 +31,7 @@ import ReferralBirthday from "./components/Referral/ReferralBirthday";
 import Gallery from "./components/Gallery/Gallery";
 import Faq from "./components/Faq/Faq";
 import ChatWidget from "./components/Chat/ChatWidget";
+import GiftCardsPage from "./components/GiftCards/GiftCardsPage";
 
 export function Home() {
   return (
@@ -102,6 +103,7 @@ function App() {
           <Route exact path="/track" component={TrackPage} />
           <Route exact path="/blog/:slug" component={BlogArticle} />
           <Route exact path="/admin" component={AdminPage} />
+          <Route exact path="/gift-cards" component={GiftCardsPage} />
           <Route component={NotFound} />
         </Switch>
         <CartDrawer />
