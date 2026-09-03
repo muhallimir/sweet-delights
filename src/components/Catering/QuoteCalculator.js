@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const TIERS = [
   { id: "standard", label: "Standard · ₱180/head", price: 180, desc: "Pasta + sweets + drinks" },
@@ -16,6 +16,7 @@ const ADDONS = [
 
 const QuoteCalculator = () => {
   const [guests, setGuests] = useState(50);
+  const { format } = useCurrency();
   const [tier, setTier] = useState("premium");
   const [addons, setAddons] = useState(["dessert"]);
   const [sent, setSent] = useState("");
@@ -44,7 +45,7 @@ const QuoteCalculator = () => {
       const a = ADDONS.find((x) => x.id === id);
       return a ? a.label : id;
     }).join(", ") || "none";
-    const message = `Quote: ${g} guests x ${tierObj.label} + addons (${addonLabels}) = ${formatPeso(total)}. Please confirm availability and final menu.`;
+    const message = `Quote: ${g} guests x ${tierObj.label} + addons (${addonLabels}) = ${format(total)}. Please confirm availability and final menu.`;
     try {
       window.dispatchEvent(new CustomEvent("sd:catering-prefill", { detail: { guests: String(g), message } }));
     } catch (e) {
@@ -77,12 +78,12 @@ const QuoteCalculator = () => {
           {ADDONS.map((a) => (
             <label key={a.id} style={{ display: "flex", gap: ".6rem", alignItems: "center", marginBottom: ".35rem", cursor: "pointer", fontSize: ".92rem" }}>
               <input type="checkbox" checked={addons.includes(a.id)} onChange={() => toggleAddon(a.id)} />
-              {a.label} · {a.perHead ? `${formatPeso(a.price)}/head` : formatPeso(a.price)}
+              {a.label} · {a.perHead ? `${format(a.price)}/head` : format(a.price)}
             </label>
           ))}
         </div>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-          <strong style={{ fontSize: "1.3rem", color: "#e3c987" }}>{formatPeso(total)}</strong>
+          <strong style={{ fontSize: "1.3rem", color: "#e3c987" }}>{format(total)}</strong>
           <span style={{ fontSize: ".85rem", opacity: 0.7 }}>{guests} guests · {tierObj.label}</span>
           <button type="button" onClick={prefill} style={{ borderRadius: 999, border: "none", background: "#e3c987", color: "#111", fontWeight: 800, padding: ".65rem 1.3rem", cursor: "pointer" }}>
             Use this quote in inquiry

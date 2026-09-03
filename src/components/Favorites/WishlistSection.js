@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useCart } from "../../context/CartContext";
 import { allProducts } from "../Products/data";
 import { getFavorites, toggleFavorite } from "../../utils/favorites";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const WishlistSection = () => {
   const { addToCart, items } = useCart();
+  const { format } = useCurrency();
   const [favorites, setFavorites] = useState(() => getFavorites());
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const WishlistSection = () => {
           <div key={p.id} style={{ display: "flex", alignItems: "center", gap: ".6rem", marginBottom: ".6rem" }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: ".88rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
-              <div style={{ fontSize: ".8rem", opacity: 0.75 }}>{formatPeso(p.priceValue)}</div>
+              <div style={{ fontSize: ".8rem", opacity: 0.75 }}>{format(p.priceValue)}</div>
             </div>
             <button
               type="button"

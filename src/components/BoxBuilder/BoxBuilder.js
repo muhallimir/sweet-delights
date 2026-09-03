@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { allProducts } from "../Products/data";
 import { useCart } from "../../context/CartContext";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const BoxSection = styled.section`
   background: #111;
@@ -72,6 +72,7 @@ const Progress = styled.div`
 
 const BoxBuilder = () => {
   const { addToCart } = useCart();
+  const { format } = useCurrency();
   const [size, setSize] = useState(6);
   const [picks, setPicks] = useState({});
   const [msg, setMsg] = useState("");
@@ -136,7 +137,7 @@ const BoxBuilder = () => {
         id: `box-${size}-${Date.now()}`,
         name: `Custom Box ${size}pc (10% off): ${parts.join(", ").slice(0, 80)}`,
         priceValue: boxPrice,
-        price: formatPeso(boxPrice),
+        price: format(boxPrice),
         img: first ? first.img : "",
         alt: "Custom box",
         desc: parts.join(", "),
@@ -144,7 +145,7 @@ const BoxBuilder = () => {
       1
     );
     setPicks({});
-    setMsg(`Box added! You saved ${formatPeso(rawSum - boxPrice)}.`);
+    setMsg(`Box added! You saved ${format(rawSum - boxPrice)}.`);
   };
 
   return (
@@ -174,7 +175,7 @@ const BoxBuilder = () => {
             <PickCard key={p.id}>
               <img src={p.img} alt={p.alt || p.name} loading="lazy" />
               <div style={{ fontSize: ".88rem", fontWeight: 700, margin: ".4rem 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={p.name}>{p.name}</div>
-              <div style={{ fontSize: ".82rem", opacity: 0.8 }}>{formatPeso(p.priceValue)}{picks[p.id] ? ` · in box: ${picks[p.id]}` : ""}</div>
+              <div style={{ fontSize: ".82rem", opacity: 0.8 }}>{format(p.priceValue)}{picks[p.id] ? ` · in box: ${picks[p.id]}` : ""}</div>
               <button
                 type="button"
                 onClick={() => addPick(p.id)}
@@ -188,8 +189,8 @@ const BoxBuilder = () => {
         </Grid>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginTop: "1rem", flexWrap: "wrap" }}>
           <div>
-            {rawSum > 0 ? <span style={{ textDecoration: "line-through", opacity: 0.6, marginRight: ".6rem" }}>{formatPeso(rawSum)}</span> : null}
-            <strong style={{ color: "#e3c987", fontSize: "1.2rem" }}>{formatPeso(boxPrice)}</strong>
+            {rawSum > 0 ? <span style={{ textDecoration: "line-through", opacity: 0.6, marginRight: ".6rem" }}>{format(rawSum)}</span> : null}
+            <strong style={{ color: "#e3c987", fontSize: "1.2rem" }}>{format(boxPrice)}</strong>
             <span style={{ opacity: 0.7, fontSize: ".85rem" }}> · 10% box discount applied</span>
           </div>
           <button

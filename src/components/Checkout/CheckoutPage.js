@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-import { formatPeso, deliveryFee } from "../../utils/format";
+import { deliveryFee } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
 import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, addLoyaltyPoints, spendLoyaltyPoints, setLoyaltyBalance, LOYALTY_COST } from "../../utils/loyalty";
 import PromoForm from "../Promo/PromoForm";
@@ -64,6 +65,7 @@ function validate(values) {
 
 const CheckoutPage = () => {
   const { items, subtotal, clearCart } = useCart();
+  const { format } = useCurrency();
   const history = useHistory();
   const [values, setValues] = useState({
     name: "",
@@ -191,7 +193,7 @@ const CheckoutPage = () => {
             <OrderId>Order ID: {placedOrder.id}</OrderId>
             <p style={{ opacity: 0.85 }}>
               {placedOrder.items.reduce((s, i) => s + (i.qty || 0), 0)} items ·{" "}
-              {formatPeso(placedOrder.total)} · {placedOrder.customer.payment}
+              {format(placedOrder.total)} · {placedOrder.customer.payment}
             </p>
             {placedOrder.fulfillmentLabel ? (
               <p style={{ background: "#10233b", border: "1px solid #2f5a8a", borderRadius: ".7rem", padding: ".6rem .9rem" }}>
@@ -209,13 +211,13 @@ const CheckoutPage = () => {
                   <span>
                     {i.qty}× {i.name}
                   </span>
-                  <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : formatPeso((i.priceValue || 0) * (i.qty || 0))}</span>
+                  <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : format((i.priceValue || 0) * (i.qty || 0))}</span>
                 </SummaryRow>
               ))}
               {placedOrder.gift && placedOrder.gift.wrap ? (
                 <SummaryRow>
                   <span>Gift wrap</span>
-                  <span>{placedOrder.gift.receipt ? "···" : formatPeso(placedOrder.giftFee || 0)}</span>
+                  <span>{placedOrder.gift.receipt ? "···" : format(placedOrder.giftFee || 0)}</span>
                 </SummaryRow>
               ) : null}
               {placedOrder.gift && placedOrder.gift.message && !(placedOrder.gift.receipt) ? (
@@ -233,18 +235,18 @@ const CheckoutPage = () => {
               {placedOrder.promoDiscount > 0 && (
                 <SummaryRow>
                   <span>Promo ({placedOrder.promoCode})</span>
-                  <span>−{formatPeso(placedOrder.promoDiscount)}</span>
+                  <span>−{format(placedOrder.promoDiscount)}</span>
                 </SummaryRow>
               )}
               {placedOrder.loyaltyDiscount > 0 && (
                 <SummaryRow>
                   <span>Loyalty reward</span>
-                  <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : `−${formatPeso(placedOrder.loyaltyDiscount)}`}</span>
+                  <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : `−${format(placedOrder.loyaltyDiscount)}`}</span>
                 </SummaryRow>
               )}
               <TotalRow>
                 <span>Total</span>
-                <span>{placedOrder.gift && placedOrder.gift.receipt ? "Gift · prices hidden" : formatPeso(placedOrder.total)}</span>
+                <span>{placedOrder.gift && placedOrder.gift.receipt ? "Gift · prices hidden" : format(placedOrder.total)}</span>
               </TotalRow>
               <p style={{ fontSize: ".9rem", opacity: 0.85 }}>
                 You earned {placedOrder.loyaltyEarned} pts. New balance: {placedOrder.loyaltyBalance} pts.
@@ -379,7 +381,7 @@ const CheckoutPage = () => {
           >
             {items.length === 0
               ? "Cart is empty"
-              : `Place order · ${formatPeso(total)}`}
+              : `Place order · ${format(total)}`}
           </PlaceOrderBtn>
         </Card>
         <Card aria-label="Order summary">
@@ -419,38 +421,38 @@ const CheckoutPage = () => {
                   <span>
                     {i.qty}× {i.name}
                   </span>
-                  <span>{formatPeso((i.priceValue || 0) * (i.qty || 0))}</span>
+                  <span>{format((i.priceValue || 0) * (i.qty || 0))}</span>
                 </SummaryRow>
               ))}
               <SummaryRow>
                 <span>Subtotal</span>
-                <span>{formatPeso(subtotal)}</span>
+                <span>{format(subtotal)}</span>
               </SummaryRow>
               {promoDiscount > 0 && (
                 <SummaryRow>
                   <span>Promo ({promoCode})</span>
-                  <span>−{formatPeso(promoDiscount)}</span>
+                  <span>−{format(promoDiscount)}</span>
                 </SummaryRow>
               )}
               {loyaltyDiscount > 0 && (
                 <SummaryRow>
                   <span>Loyalty (100pts)</span>
-                  <span>−{formatPeso(loyaltyDiscount)}</span>
+                  <span>−{format(loyaltyDiscount)}</span>
                 </SummaryRow>
               )}
               <SummaryRow>
                 <span>Delivery{fulfillment.type === "pickup" ? " (pickup FREE)" : ""}</span>
-                <span>{fee === 0 ? "FREE" : formatPeso(fee)}</span>
+                <span>{fee === 0 ? "FREE" : format(fee)}</span>
               </SummaryRow>
               {giftFee > 0 && (
                 <SummaryRow>
                   <span>Gift wrap</span>
-                  <span>{formatPeso(giftFee)}</span>
+                  <span>{format(giftFee)}</span>
                 </SummaryRow>
               )}
               <TotalRow>
                 <span>Total</span>
-                <span>{formatPeso(total)}</span>
+                <span>{format(total)}</span>
               </TotalRow>
               <p style={{ fontSize: "0.85rem", opacity: 0.7 }}>
                 Free delivery on orders ₱500 and up. Mock checkout, no real

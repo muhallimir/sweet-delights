@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useCart } from "../../context/CartContext";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const SubSection = styled.section`
   background: #0d0d0d;
@@ -51,6 +51,7 @@ const FREQS = [
 
 const SubscribeBox = () => {
   const { addToCart } = useCart();
+  const { format } = useCurrency();
   const [size, setSize] = useState("family");
   const [freq, setFreq] = useState("weekly");
   const [msg, setMsg] = useState("");
@@ -64,7 +65,7 @@ const SubscribeBox = () => {
         id: `sub-${size}-${freq}-${Date.now()}`,
         name: `Bread Box ${sizeObj.label} · ${freqObj.label} (Recurring)`,
         priceValue: sizeObj.price,
-        price: formatPeso(sizeObj.price),
+        price: format(sizeObj.price),
         desc: `Recurring ${freqObj.label} delivery`,
         alt: "Subscription bread box",
       },
@@ -82,7 +83,7 @@ const SubscribeBox = () => {
         <OptRow role="group" aria-label="Box size">
           {SIZES.map((s) => (
             <OptBtn key={s.id} active={size === s.id} onClick={() => setSize(s.id)} aria-pressed={size === s.id}>
-              {s.label} · {formatPeso(s.price)}
+              {s.label} · {format(s.price)}
             </OptBtn>
           ))}
         </OptRow>
@@ -95,7 +96,7 @@ const SubscribeBox = () => {
           ))}
         </OptRow>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap", marginTop: ".6rem" }}>
-          <strong style={{ color: "#e3c987", fontSize: "1.2rem" }}>{formatPeso(sizeObj.price)} / {freqObj.label.toLowerCase()}</strong>
+          <strong style={{ color: "#e3c987", fontSize: "1.2rem" }}>{format(sizeObj.price)} / {freqObj.label.toLowerCase()}</strong>
           <button type="button" onClick={subscribe} style={{ borderRadius: 999, border: "none", background: "#e3c987", color: "#111", fontWeight: 800, padding: ".7rem 1.4rem", cursor: "pointer" }}>
             Subscribe · add recurring item
           </button>

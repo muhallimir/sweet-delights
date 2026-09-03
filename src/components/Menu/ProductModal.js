@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useCart } from "../../context/CartContext";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 import Reviews from "../Reviews/Reviews";
 import NutritionModal from "../Nutrition/NutritionModal";
 
@@ -127,6 +127,7 @@ const AddBtn = styled.button`
 
 const ProductModal = ({ product, onClose }) => {
   const { addToCart } = useCart();
+  const { format } = useCurrency();
   const [qty, setQty] = useState(1);
   const [showNutrition, setShowNutrition] = useState(false);
   const productId = product ? product.id : null;
@@ -170,7 +171,7 @@ const ProductModal = ({ product, onClose }) => {
           <Body>
             <h2>{product.name}</h2>
             <p className="desc">{product.desc}</p>
-            <p className="price">{formatPeso(unit)}</p>
+            <p className="price">{format(unit)}</p>
             <p style={{ fontSize: ".85rem", opacity: 0.7 }}>
               Category: {product.category || "sweets"} · Best served fresh daily
               {(product.allergens && product.allergens.length > 0) ? ` · Contains: ${product.allergens.join(", ")}` : " · No major allergens declared"}
@@ -214,10 +215,10 @@ const ProductModal = ({ product, onClose }) => {
               >
                 +
               </button>
-              <span style={{ fontWeight: 700 }}>{formatPeso(unit * qty)}</span>
+              <span style={{ fontWeight: 700 }}>{format(unit * qty)}</span>
             </QtyRow>
             <AddBtn onClick={() => addToCart(product, qty)}>
-              Add {qty} to cart · {formatPeso(unit * qty)}
+              Add {qty} to cart · {format(unit * qty)}
             </AddBtn>
             <Reviews product={product} />
           </Body>

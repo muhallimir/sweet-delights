@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-import { formatPeso, deliveryFee } from "../../utils/format";
+import { deliveryFee } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
 import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, LOYALTY_VALUE } from "../../utils/loyalty";
 import PromoForm from "../Promo/PromoForm";
@@ -39,6 +40,7 @@ const CartDrawer = () => {
     removeFromCart,
     clearCart,
   } = useCart();
+  const { format } = useCurrency();
 
   useEffect(() => {
     const onKey = (e) => {
@@ -131,7 +133,7 @@ const CartDrawer = () => {
                     {item.id && String(item.id).startsWith("box-") ? (
                       <span style={{ fontSize: ".72rem", background: "#1b1b10", border: "1px solid rgba(227,201,135,.4)", borderRadius: 999, padding: ".1rem .55rem", color: "#e3c987" }}>Custom box · 10% off</span>
                     ) : null}
-                    <p>{formatPeso(item.priceValue)} each</p>
+                    <p>{format(item.priceValue)} each</p>
                     <QtyRow>
                       <QtyBtn
                         onClick={() => decrement(item.id)}
@@ -174,7 +176,7 @@ const CartDrawer = () => {
                     </RemoveBtn>
                   </ItemInfo>
                   <div style={{ fontWeight: 700 }}>
-                    {formatPeso((item.priceValue || 0) * (item.qty || 0))}
+                    {format((item.priceValue || 0) * (item.qty || 0))}
                   </div>
                 </CartItem>
               ))}
@@ -197,29 +199,29 @@ const CartDrawer = () => {
             />
             <div className="row">
               <span>Subtotal</span>
-              <span>{formatPeso(subtotal)}</span>
+              <span>{format(subtotal)}</span>
             </div>
             {promoDiscount > 0 && (
               <div className="row">
                 <span>Promo ({promoCode})</span>
-                <span>−{formatPeso(promoDiscount)}</span>
+                <span>−{format(promoDiscount)}</span>
               </div>
             )}
             {loyaltyDiscount > 0 && (
               <div className="row">
                 <span>Loyalty (100pts)</span>
-                <span>−{formatPeso(loyaltyDiscount)}</span>
+                <span>−{format(loyaltyDiscount)}</span>
               </div>
             )}
             <div className="row">
               <span>Delivery</span>
-              <span>{fee === 0 ? "FREE" : formatPeso(fee)}</span>
+              <span>{fee === 0 ? "FREE" : format(fee)}</span>
             </div>
             <div className="row total">
               <span>Total</span>
-              <span>{formatPeso(total)}</span>
+              <span>{format(total)}</span>
             </div>
-            <p className="hint">Free delivery on orders ₱500 and up. Earn 1pt per ₱1. 100pts = {formatPeso(LOYALTY_VALUE)} off.</p>
+            <p className="hint">Free delivery on orders ₱500 and up. Earn 1pt per ₱1. 100pts = {format(LOYALTY_VALUE)} off.</p>
             <CheckoutBtn as={Link} to="/checkout" onClick={closeCart}>
               Go to Checkout
             </CheckoutBtn>

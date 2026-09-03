@@ -10,6 +10,7 @@ import {
 } from "./NavbarElements";
 import { FaShoppingCart } from "react-icons/fa";
 import { useCart } from "../../context/CartContext";
+import CurrencyToggle from "../Currency/CurrencyToggle";
 
 const Navbar = ({ toggle }) => {
   const { count, openCart } = useCart();
@@ -20,6 +21,7 @@ const Navbar = ({ toggle }) => {
           Sweet Delights
         </NavLink>
         <NavIcon>
+          <CurrencyToggle />
           <CartButton
             onClick={openCart}
             aria-label={`Open cart, ${count} items`}

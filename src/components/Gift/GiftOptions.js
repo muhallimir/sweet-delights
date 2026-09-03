@@ -1,8 +1,9 @@
 import React from "react";
 import { GIFT_WRAP_PRICE } from "../../utils/gift";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const GiftOptions = ({ value, onChange }) => {
+  const { format } = useCurrency();
   const set = (k, v) => onChange({ ...value, [k]: v });
 
   return (
@@ -10,7 +11,7 @@ const GiftOptions = ({ value, onChange }) => {
       <h3 style={{ margin: "0 0 .6rem" }}>Gift options</h3>
       <label style={{ display: "flex", gap: ".6rem", alignItems: "center", cursor: "pointer" }}>
         <input type="checkbox" checked={Boolean(value.wrap)} onChange={(e) => set("wrap", e.target.checked)} />
-        Gift wrap · +{formatPeso(GIFT_WRAP_PRICE)}
+        Gift wrap · +{format(GIFT_WRAP_PRICE)}
       </label>
       <label htmlFor="gift-msg" style={{ display: "block", fontSize: ".85rem", margin: ".7rem 0 .3rem" }}>Gift message (optional)</label>
       <textarea

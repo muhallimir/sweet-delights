@@ -1,3 +1,4 @@
+import { useCurrency } from "../../utils/currency";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ProductCard,
@@ -37,6 +38,7 @@ function sortProducts(list, sort) {
 
 const MenuExperience = ({ heading, products, id }) => {
   const { addToCart, addQuiet } = useCart();
+  const { format } = useCurrency();
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("featured");
@@ -226,7 +228,7 @@ const MenuExperience = ({ heading, products, id }) => {
                 {product.diet && product.diet.dairyFree ? <span title="Dairy-free" style={{ fontSize: ".8rem", background: "#222", borderRadius: 999, padding: ".1rem .55rem", border: "1px solid rgba(255,255,255,.15)" }}>DF</span> : null}
               </div>
               <ProductDesc>{product.desc}</ProductDesc>
-              <ProductPrice>{product.price}</ProductPrice>
+              <ProductPrice>{format(product.priceValue)}</ProductPrice>
               <div style={{ display: "flex", gap: ".5rem" }}>
                 <ProductButton
                   onClick={() => setSelected(product)}

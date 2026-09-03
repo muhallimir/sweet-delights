@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { allProducts } from "../Products/data";
 import { useCart } from "../../context/CartContext";
 import { starText } from "../../utils/reviews";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const RailSection = styled.section`
   background: #0d0d0d;
@@ -88,6 +88,7 @@ const AddBtn = styled.button`
 
 const BestsellersRail = () => {
   const { addToCart } = useCart();
+  const { format } = useCurrency();
   const top = [...(allProducts || [])]
     .sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviewsCount || 0) - (a.reviewsCount || 0))
     .slice(0, 5);
@@ -106,7 +107,7 @@ const BestsellersRail = () => {
               <div style={{ color: "#e3c987", fontSize: ".88rem" }} aria-label={`Rated ${p.rating} out of 5`}>
                 {starText(p.rating)} <span style={{ color: "#fff", opacity: 0.7 }}>({p.reviewsCount})</span>
               </div>
-              <div style={{ fontWeight: 800, marginTop: ".25rem" }}>{formatPeso(p.priceValue)}</div>
+              <div style={{ fontWeight: 800, marginTop: ".25rem" }}>{format(p.priceValue)}</div>
               <AddBtn onClick={() => addToCart(p, 1)} aria-label={`Add ${p.name} to cart`}>
                 Add to cart
               </AddBtn>

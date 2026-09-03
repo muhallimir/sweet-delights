@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { allProducts } from "../Products/data";
 import { useCart } from "../../context/CartContext";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const DealSection = styled.section`
   background: linear-gradient(135deg, #1b1206, #0d0d0d);
@@ -79,6 +79,7 @@ function fmt(ms) {
 
 const DailyDeal = () => {
   const { addToCart } = useCart();
+  const { format } = useCurrency();
   const deal = useMemo(() => dealForToday(), []);
   const [left, setLeft] = useState(() => msToMidnight());
 
@@ -97,7 +98,7 @@ const DailyDeal = () => {
         id: `deal-${key}-${product.id}`,
         name: `${product.name} (Deal -${pct}%)`,
         priceValue: dealPrice,
-        price: formatPeso(dealPrice),
+        price: format(dealPrice),
       },
       1
     );
@@ -112,8 +113,8 @@ const DailyDeal = () => {
           <h2 style={{ margin: ".6rem 0 .2rem", color: "#e3c987" }}>{product.name}</h2>
           <p style={{ opacity: 0.85, margin: 0 }}>{product.desc}</p>
           <p style={{ margin: ".6rem 0" }}>
-            <span style={{ textDecoration: "line-through", opacity: 0.6, marginRight: ".6rem" }}>{formatPeso(product.priceValue)}</span>
-            <strong style={{ fontSize: "1.4rem", color: "#e3c987" }}>{formatPeso(dealPrice)}</strong>
+            <span style={{ textDecoration: "line-through", opacity: 0.6, marginRight: ".6rem" }}>{format(product.priceValue)}</span>
+            <strong style={{ fontSize: "1.4rem", color: "#e3c987" }}>{format(dealPrice)}</strong>
           </p>
           <Timer role="timer" aria-label="Time left for daily deal">Ends in {fmt(left)}</Timer>
           <p style={{ fontSize: ".85rem", opacity: 0.7, margin: "0 0 .8rem" }}>Auto-rotates daily at midnight. One deal per day.</p>
@@ -123,7 +124,7 @@ const DailyDeal = () => {
             style={{ borderRadius: 999, border: "none", background: "#e3c987", color: "#111", fontWeight: 800, padding: ".7rem 1.4rem", cursor: "pointer" }}
             aria-label={`Add daily deal ${product.name} to cart`}
           >
-            Claim deal · {formatPeso(dealPrice)}
+            Claim deal · {format(dealPrice)}
           </button>
         </div>
       </DealInner>

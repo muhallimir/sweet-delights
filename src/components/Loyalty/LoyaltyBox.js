@@ -1,8 +1,9 @@
 import React from "react";
 import { LOYALTY_COST, LOYALTY_VALUE } from "../../utils/loyalty";
-import { formatPeso } from "../../utils/format";
+import { useCurrency } from "../../utils/currency";
 
 const LoyaltyBox = ({ balance, redeem, onToggle, earnPreview }) => {
+  const { format } = useCurrency();
   const canRedeem = balance >= LOYALTY_COST;
   return (
     <div
@@ -20,7 +21,7 @@ const LoyaltyBox = ({ balance, redeem, onToggle, earnPreview }) => {
         <span>
           Loyalty: <strong>{balance} pts</strong>
         </span>
-        <span style={{ opacity: 0.75, fontSize: ".8rem" }}>1pt per ₱1 · 100pts = {formatPeso(LOYALTY_VALUE)} off</span>
+        <span style={{ opacity: 0.75, fontSize: ".8rem" }}>1pt per ₱1 · 100pts = {format(LOYALTY_VALUE)} off</span>
       </div>
       {earnPreview > 0 ? (
         <div style={{ fontSize: ".82rem", opacity: 0.8, marginTop: ".2rem" }}>
@@ -34,7 +35,7 @@ const LoyaltyBox = ({ balance, redeem, onToggle, earnPreview }) => {
           disabled={!canRedeem}
           onChange={(e) => onToggle(e.target.checked)}
         />
-        Use 100 pts for {formatPeso(LOYALTY_VALUE)} off
+        Use 100 pts for {format(LOYALTY_VALUE)} off
       </label>
       {!canRedeem ? (
         <div style={{ fontSize: ".8rem", opacity: 0.7, marginTop: ".25rem" }}>
