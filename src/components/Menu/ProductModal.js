@@ -5,6 +5,8 @@ import { useCurrency } from "../../utils/currency";
 import Reviews from "../Reviews/Reviews";
 import NutritionModal from "../Nutrition/NutritionModal";
 import PreorderToggle from "../Preorder/PreorderToggle";
+import AllergenSubstitution from "../Allergens/AllergenSubstitution";
+import { substitutedAllergens } from "../../utils/allergenSubs";
 import { addScheduledItem, getScheduledItems } from "../../utils/scheduled";
 
 const Overlay = styled.div`
@@ -146,6 +148,23 @@ const ProductModal = ({ product, onClose }) => {
   }, [productId]);
 
   useEffect(() => {
+    const onUpd = () => {
+      const existing = getScheduledItems().find((i) => i.productId === productId);
+      setScheduledAt(existing ? existing.scheduledAt : null);
+    };
+    const onSub = () => {
+      // trigger re-render so substitutedAllergens re-reads localStorage
+      setQty((q) => q);
+    };
+    window.addEventListener("sd:scheduled", onUpd);
+    window.addEventListener("sd:substitutions", onSub);
+    return () => {
+      window.removeEventListener("sd:scheduled", onUpd);
+      window.removeEventListener("sd:substitutions", onSub);
+    };
+  }, [productId]);
+
+  useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
     };
@@ -195,7 +214,19 @@ const ProductModal = ({ product, onClose }) => {
             <p className="price">{format(unit)}</p>
             <p style={{ fontSize: ".85rem", opacity: 0.7 }}>
               Category: {product.category || "sweets"} · Best served fresh daily
-              {(product.allergens && product.allergens.length > 0) ? ` · Contains: ${product.allergens.join(", ")}` : " · No major allergens declared"}
+              {(() => {
+                try {
+                  const raw = typeof window !== "undefined" ? window.localStorage.getItem("sd-substitutions") : null;
+                  const list = raw ? JSON.parse(raw) : [];
+                  const remaining = substitutedAllergens(product, list);
+                  if (remaining && remaining.length > 0) {
+                    return ` · Contains: ${remaining.join(", ")}`;
+                  }
+                  return " · Allergens swapped or none declared";
+                } catch (e) {
+                  return product.allergens && product.allergens.length > 0 ? ` · Contains: ${product.allergens.join(", ")}` : " · No major allergens declared";
+                }
+              })()}
             </p>
             <button
               type="button"
@@ -241,6 +272,7 @@ const ProductModal = ({ product, onClose }) => {
             <AddBtn onClick={() => addToCart(product, qty)}>
               Add {qty} to cart · {format(unit * qty)}
             </AddBtn>
+            <AllergenSubstitution product={product} />
             <div style={{ marginTop: ".7rem" }}>
               <PreorderToggle
                 productId={product.id}
