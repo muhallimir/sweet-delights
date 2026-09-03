@@ -6,6 +6,7 @@ import MenuExperience from "./components/Menu/MenuSection";
 import Featured from "./components/Featured";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Newsletter from "./components/Newsletter/Newsletter";
+import Catering from "./components/Catering/Catering";
 import Footer from "./components/Footer";
 import BackToTop from "./components/BackToTop/BackToTop";
 import NotFound from "./components/NotFound/NotFound";
@@ -38,6 +39,9 @@ function Home() {
       </Reveal>
       <Reveal>
         <Newsletter />
+      </Reveal>
+      <Reveal>
+        <Catering />
       </Reveal>
       <Footer />
     </>
