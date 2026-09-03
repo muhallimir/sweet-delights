@@ -25,6 +25,7 @@ import BlogGrid from "./components/Blog/BlogGrid";
 import BlogArticle from "./components/Blog/BlogArticle";
 import Gallery from "./components/Gallery/Gallery";
 import Faq from "./components/Faq/Faq";
+import ChatWidget from "./components/Chat/ChatWidget";
 
 function Home() {
   return (
@@ -91,6 +92,7 @@ function App() {
         </Switch>
         <CartDrawer />
         <BackToTop />
+        <ChatWidget />
       </CartProvider>
     </Router>
   );
