@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { starText, getReviews, addReview, validateReview } from "../../utils/reviews";
+import PhotoReviewForm from "./PhotoReviewForm";
 
 const seedFor = (productId) => {
   const seeds = {
@@ -100,6 +101,7 @@ const Reviews = ({ product }) => {
           {ok ? <span role="status" style={{ color: "#c8f0d2", fontSize: ".85rem" }}>{ok}</span> : null}
         </div>
       </form>
+      <PhotoReviewForm product={product} />
     </div>
   );
 };
