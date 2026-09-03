@@ -26,6 +26,7 @@ import TrackPage from "./components/Track/TrackPage";
 import BlogGrid from "./components/Blog/BlogGrid";
 import BlogArticle from "./components/Blog/BlogArticle";
 import AdminPage from "./components/Admin/AdminPage";
+import ReferralBirthday from "./components/Referral/ReferralBirthday";
 import Gallery from "./components/Gallery/Gallery";
 import Faq from "./components/Faq/Faq";
 import ChatWidget from "./components/Chat/ChatWidget";
@@ -67,6 +68,7 @@ function Home() {
       <Reveal>
         <Faq />
       </Reveal>
+      <ReferralBirthday />
       <Reveal>
         <Newsletter />
       </Reveal>

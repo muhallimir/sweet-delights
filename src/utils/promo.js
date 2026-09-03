@@ -11,6 +11,12 @@ export const PROMO_CODES = {
     value: 0,
     label: "Free delivery",
   },
+  BDAY15: {
+    code: "BDAY15",
+    type: "percent",
+    value: 15,
+    label: "15% off birthday treat",
+  },
 };
 
 const KEY = "sd-promo";
