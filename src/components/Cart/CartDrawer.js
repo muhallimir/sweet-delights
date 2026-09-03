@@ -125,6 +125,12 @@ const CartDrawer = () => {
                   )}
                   <ItemInfo>
                     <h3 title={item.name}>{item.name}</h3>
+                    {item.id && String(item.id).startsWith("sub-") ? (
+                      <span style={{ fontSize: ".72rem", background: "#14351f", border: "1px solid #2f7a44", borderRadius: 999, padding: ".1rem .55rem", color: "#c8f0d2" }}>Recurring · manage here</span>
+                    ) : null}
+                    {item.id && String(item.id).startsWith("box-") ? (
+                      <span style={{ fontSize: ".72rem", background: "#1b1b10", border: "1px solid rgba(227,201,135,.4)", borderRadius: 999, padding: ".1rem .55rem", color: "#e3c987" }}>Custom box · 10% off</span>
+                    ) : null}
                     <p>{formatPeso(item.priceValue)} each</p>
                     <QtyRow>
                       <QtyBtn
