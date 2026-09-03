@@ -5,6 +5,7 @@ import { allProducts } from "./components/Products/data";
 import MenuExperience from "./components/Menu/MenuSection";
 import Featured from "./components/Featured";
 import BestsellersRail from "./components/Bestsellers/BestsellersRail";
+import DailyDeal from "./components/Deal/DailyDeal";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Newsletter from "./components/Newsletter/Newsletter";
 import Catering from "./components/Catering/Catering";
@@ -35,6 +36,7 @@ function Home() {
         />
       </Reveal>
       <Featured />
+      <DailyDeal />
       <Reveal>
         <BestsellersRail />
       </Reveal>
