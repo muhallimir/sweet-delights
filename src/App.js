@@ -8,6 +8,7 @@ import MenuExperience from "./components/Menu/MenuSection";
 import Featured from "./components/Featured";
 import BestsellersRail from "./components/Bestsellers/BestsellersRail";
 import DailyDeal from "./components/Deal/DailyDeal";
+import ComboOfTheWeek from "./components/Combo/ComboOfTheWeek";
 import BoxBuilder from "./components/BoxBuilder/BoxBuilder";
 import SubscribeBox from "./components/Subscriptions/SubscribeBox";
 import Stores from "./components/Stores/Stores";
@@ -50,6 +51,9 @@ export function Home() {
       </Reveal>
       <Featured />
       <DailyDeal />
+      <Reveal>
+        <ComboOfTheWeek />
+      </Reveal>
       <BoxBuilder />
       <SubscribeBox />
       <Reveal>
