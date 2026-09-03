@@ -11,6 +11,7 @@ import { getScheduledItems, clearScheduledItems } from "../../utils/scheduled";
 import { formatScheduledFor } from "../../utils/preorder";
 import SmsOptIn from "../Sms/SmsOptIn";
 import { validateOrderNotes, normalizeNotes, NOTE_MAX, BAKER_NOTE_MAX } from "../../utils/orderNotes";
+import QRTicket from "../QR/QRTicket";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import FulfillmentPicker from "../Fulfillment/FulfillmentPicker";
@@ -350,6 +351,9 @@ const CheckoutPage = () => {
                 /* mock only; subs are stored client-side */
               }}
             />
+            {placedOrder.fulfillment && placedOrder.fulfillment.type === "pickup" ? (
+              <QRTicket orderId={placedOrder.id} value={placedOrder.total} />
+            ) : null}
             <PlaceOrderBtn as={Link} to="/" style={{ textDecoration: "none", textAlign: "center", display: "block" }}>
               Back to menu
             </PlaceOrderBtn>
