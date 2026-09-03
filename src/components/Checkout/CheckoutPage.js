@@ -9,6 +9,7 @@ import { hasFreeDelivery } from "../../utils/loyaltyTier";
 import TierCard from "../Loyalty/TierCard";
 import { getScheduledItems, clearScheduledItems } from "../../utils/scheduled";
 import { formatScheduledFor } from "../../utils/preorder";
+import SmsOptIn from "../Sms/SmsOptIn";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import FulfillmentPicker from "../Fulfillment/FulfillmentPicker";
@@ -322,6 +323,13 @@ const CheckoutPage = () => {
               {receiptErr ? <div role="alert" style={{ color: "#ff9a9a", fontSize: ".85rem", marginTop: ".35rem" }}>{receiptErr}</div> : null}
               {receiptMsg ? <div role="status" style={{ color: "#c8f0d2", fontSize: ".85rem", marginTop: ".35rem" }}>{receiptMsg}</div> : null}
             </form>
+            <SmsOptIn
+              phone={placedOrder.customer.phone}
+              orderId={placedOrder.id}
+              onChange={() => {
+                /* mock only; subs are stored client-side */
+              }}
+            />
             <PlaceOrderBtn as={Link} to="/" style={{ textDecoration: "none", textAlign: "center", display: "block" }}>
               Back to menu
             </PlaceOrderBtn>

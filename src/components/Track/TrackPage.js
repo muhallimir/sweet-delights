@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckoutWrap, Card, Title, Sub, Field, ErrorText, PlaceOrderBtn, BackLink } from "../Checkout/CheckoutElements";
+import { tickSmsSubs, smsStatusFor } from "../../utils/sms";
 
 export const STAGES = ["placed", "baking", "out for delivery", "delivered"];
 
 export function stageForId(id, orderDate) {
+  const smsStage = smsStatusFor(id);
+  if (smsStage != null) return smsStage;
   if (orderDate) {
     const mins = (Date.now() - new Date(orderDate).getTime()) / 60000;
     if (mins < 10) return 0;
@@ -23,6 +26,24 @@ const TrackPage = () => {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      tickSmsSubs();
+      setTick((n) => n + 1);
+    }, 3000);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    if (!result) return;
+    tickSmsSubs();
+    const fresh = smsStatusFor(result.id);
+    if (fresh != null) {
+      setResult((prev) => prev ? { ...prev, stage: fresh } : prev);
+    }
+  }, [tick, result]);
 
   const track = (e) => {
     if (e) e.preventDefault();
