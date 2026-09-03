@@ -4,37 +4,33 @@ import { IoFastFoodOutline } from "react-icons/io5";
 
 export const Nav = styled.nav`
   background: transparent;
-  position: float;
+  position: relative;
   height: 80px;
   display: flex;
-  padding-left: 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
   font-weight: 700;
 `;
 
 export const NavLink = styled(Link)`
   color: white;
-  font-size: 2rem;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   text-decoration: none;
   cursor: pointer;
+  white-space: nowrap;
 
-  @media screen and (max-width: 400px) {
-    position: absolute;
-    top: 5px;
-    left: 25px;
-    font-size: 1.5rem;
+  @media screen and (max-width: 480px) {
+    font-size: 1.15rem;
   }
 `;
 
 export const NavIcon = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 1.1rem 1.25rem 0 0;
+  gap: 0.5rem;
   color: white;
 
   p {
@@ -61,6 +57,10 @@ export const MenuButton = styled.button`
     color: #e3c987;
     outline: 2px solid #e3c987;
     outline-offset: 2px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.4rem;
   }
 `;
 
@@ -103,8 +103,6 @@ export const CartBadge = styled.span`
 `;
 
 export const Bars = styled(IoFastFoodOutline)`
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: white;
-
-  transform: translate(-50%, -15%);
 `;

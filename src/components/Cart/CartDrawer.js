@@ -31,6 +31,7 @@ import {
 const CartDrawer = () => {
   const {
     items,
+    count,
     subtotal,
     isCartOpen,
     closeCart,
@@ -103,7 +104,7 @@ const CartDrawer = () => {
         aria-hidden={!isCartOpen}
       >
         <CartHeader>
-          <h2>Your Cart ({items.reduce((s, i) => s + (i.qty || 0), 0)})</h2>
+          <h2>Your Cart ({count})</h2>
           <CloseBtn onClick={closeCart} aria-label="Close cart">
             ✕
           </CloseBtn>
