@@ -26,8 +26,10 @@ const Hero = () => {
       <HeroContent>
         <HeroItems>
           <HeroTitle>Sweetness That You Always Deserve</HeroTitle>
-          <HeroSub>Free Delivery</HeroSub>
-          <HeroBtn>Order Now</HeroBtn>
+          <HeroSub>Free Delivery on orders ₱500+</HeroSub>
+          <HeroBtn as="a" href="#menu" aria-label="Order now, browse menu">
+            Order Now
+          </HeroBtn>
         </HeroItems>
       </HeroContent>
     </HeroContainer>

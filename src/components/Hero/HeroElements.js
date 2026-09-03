@@ -53,7 +53,7 @@ export const HeroSub = styled.div`
   margin-bottom: 2rem;
 `;
 
-export const HeroBtn = styled.div`
+export const HeroBtn = styled.a`
   font-size: 1.4rem;
   padding: 1rem 4rem;
   margin-left: 1rem;
@@ -63,11 +63,16 @@ export const HeroBtn = styled.div`
   cursor: pointer;
   transition: 0.2s ease-out;
   border-radius: 2rem;
+  text-decoration: none;
+  display: inline-block;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background: #ffc500;
     transition: 0.2s ease-out;
     color: #000;
     border-radius: 2rem;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
   }
 `;

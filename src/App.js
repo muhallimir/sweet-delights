@@ -7,6 +7,9 @@ import Featured from "./components/Featured";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Newsletter from "./components/Newsletter/Newsletter";
 import Footer from "./components/Footer";
+import BackToTop from "./components/BackToTop/BackToTop";
+import NotFound from "./components/NotFound/NotFound";
+import Reveal from "./components/Reveal/Reveal";
 import Typical from "react-typical";
 import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./components/Cart/CartDrawer";
@@ -16,20 +19,26 @@ function Home() {
   return (
     <>
       <Hero />
-      <MenuExperience
-        id="menu"
-        heading={
-          <Typical
-            steps={["Pick your sweets", 900, "Fresh daily 🥰", 1000]}
-            loop={Infinity}
-            wrapper="p"
-          />
-        }
-        products={allProducts}
-      />
+      <Reveal>
+        <MenuExperience
+          id="menu"
+          heading={
+            <Typical
+              steps={["Pick your sweets", 900, "Fresh daily 🥰", 1000]}
+              loop={Infinity}
+              wrapper="p"
+            />
+          }
+          products={allProducts}
+        />
+      </Reveal>
       <Featured />
-      <Testimonials />
-      <Newsletter />
+      <Reveal>
+        <Testimonials />
+      </Reveal>
+      <Reveal>
+        <Newsletter />
+      </Reveal>
       <Footer />
     </>
   );
@@ -40,33 +49,16 @@ function App() {
     <Router>
       <CartProvider>
         <GlobalStyle />
+        <a href="#menu" className="sr-only">
+          Skip to menu
+        </a>
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/checkout" component={CheckoutPage} />
-          <Route
-            render={() => (
-              <>
-                <Hero />
-                <div
-                  style={{
-                    background: "#0d0d0d",
-                    color: "#fff",
-                    textAlign: "center",
-                    padding: "4rem 1rem",
-                  }}
-                >
-                  <h1>Page coming soon</h1>
-                  <p>Full site navigation lands with the next update.</p>
-                  <a href="/" style={{ color: "#e3c987" }}>
-                    Back to home
-                  </a>
-                </div>
-                <Footer />
-              </>
-            )}
-          />
+          <Route component={NotFound} />
         </Switch>
         <CartDrawer />
+        <BackToTop />
       </CartProvider>
     </Router>
   );
