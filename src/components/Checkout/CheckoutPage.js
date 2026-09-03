@@ -84,6 +84,9 @@ const CheckoutPage = () => {
   const [fulfillment, setFulfillmentState] = useState(() => getFulfillment());
   const [fulErrors, setFulErrors] = useState({});
   const [gift, setGiftState] = useState(() => getGift());
+  const [receiptEmail, setReceiptEmail] = useState("");
+  const [receiptMsg, setReceiptMsg] = useState("");
+  const [receiptErr, setReceiptErr] = useState("");
 
   useEffect(() => {
     setPromoCode(getStoredPromo());
@@ -175,10 +178,30 @@ const CheckoutPage = () => {
     window.scrollTo(0, 0);
   };
 
+  const sendReceipt = (e) => {
+    if (e) e.preventDefault();
+    const email = String(receiptEmail || "").trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      setReceiptErr("Enter a valid email to send the receipt.");
+      setReceiptMsg("");
+      return;
+    }
+    setReceiptErr("");
+    try {
+      const raw = localStorage.getItem("sd-receipts");
+      const prev = raw ? JSON.parse(raw) : [];
+      const next = Array.isArray(prev) ? [...prev, { orderId: placedOrder.id, email, at: new Date().toISOString() }] : [{ orderId: placedOrder.id, email, at: new Date().toISOString() }];
+      localStorage.setItem("sd-receipts", JSON.stringify(next));
+    } catch (err) {
+      // ignore
+    }
+    setReceiptMsg(`Receipt sent to ${email} (mock). Check your inbox.`);
+  };
+
   if (placedOrder) {
     return (
       <CheckoutWrap>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }} className="receipt-print">
           <BackLink as={Link} to="/">
             ← Back to home
           </BackLink>
@@ -252,6 +275,23 @@ const CheckoutPage = () => {
                 You earned {placedOrder.loyaltyEarned} pts. New balance: {placedOrder.loyaltyBalance} pts.
               </p>
             </div>
+            <div style={{ display: "flex", gap: ".6rem", flexWrap: "wrap", marginTop: "1rem" }}>
+              <button type="button" onClick={() => window.print()} style={{ borderRadius: 999, border: "1px solid #e3c987", background: "transparent", color: "#e3c987", padding: ".6rem 1.2rem", cursor: "pointer" }}>
+                Print receipt
+              </button>
+              <Link to="/track" style={{ borderRadius: 999, border: "1px solid rgba(255,255,255,.3)", color: "#fff", padding: ".6rem 1.2rem", textDecoration: "none" }}>
+                Track order
+              </Link>
+            </div>
+            <form onSubmit={sendReceipt} style={{ marginTop: "1rem", background: "#101010", border: "1px solid rgba(255,255,255,.1)", borderRadius: ".8rem", padding: ".9rem" }} aria-label="Email receipt">
+              <label htmlFor="receipt-email" style={{ display: "block", fontSize: ".9rem", marginBottom: ".35rem" }}>Email receipt (mock)</label>
+              <div style={{ display: "flex", gap: ".5rem" }}>
+                <input id="receipt-email" type="email" placeholder="you@mail.com" value={receiptEmail} onChange={(e) => setReceiptEmail(e.target.value)} style={{ flex: 1, borderRadius: 8, border: "1px solid #555", background: "#0f0f0f", color: "#fff", padding: ".6rem .8rem" }} />
+                <button type="submit" style={{ borderRadius: 999, border: "none", background: "#e3c987", color: "#111", fontWeight: 800, padding: ".6rem 1.1rem", cursor: "pointer" }}>Send</button>
+              </div>
+              {receiptErr ? <div role="alert" style={{ color: "#ff9a9a", fontSize: ".85rem", marginTop: ".35rem" }}>{receiptErr}</div> : null}
+              {receiptMsg ? <div role="status" style={{ color: "#c8f0d2", fontSize: ".85rem", marginTop: ".35rem" }}>{receiptMsg}</div> : null}
+            </form>
             <PlaceOrderBtn as={Link} to="/" style={{ textDecoration: "none", textAlign: "center", display: "block" }}>
               Back to menu
             </PlaceOrderBtn>

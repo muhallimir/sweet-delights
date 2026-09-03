@@ -18,3 +18,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+@media print {
+  nav,
+  aside,
+  button,
+  form,
+  a {
+    display: none !important;
+  }
+  main,
+  section,
+  div {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .receipt-print {
+    display: block !important;
+  }
+  .receipt-print button,
+  .receipt-print form,
+  .receipt-print a {
+    display: none !important;
+  }
+  .receipt-print * {
+    color: #000 !important;
+    background: #fff !important;
+    border-color: #ccc !important;
+  }
+}
