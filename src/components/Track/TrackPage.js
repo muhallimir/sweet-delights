@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckoutWrap, Card, Title, Sub, Field, ErrorText, PlaceOrderBtn, BackLink } from "../Checkout/CheckoutElements";
 
-const STAGES = ["placed", "baking", "out for delivery", "delivered"];
+export const STAGES = ["placed", "baking", "out for delivery", "delivered"];
 
-function stageForId(id, orderDate) {
+export function stageForId(id, orderDate) {
   if (orderDate) {
     const mins = (Date.now() - new Date(orderDate).getTime()) / 60000;
     if (mins < 10) return 0;

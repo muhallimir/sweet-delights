@@ -1,5 +1,5 @@
 export function parsePriceToNumber(price) {
-  if (typeof price === "number") return price;
+  if (typeof price === "number") return Number.isFinite(price) ? price : 0;
   if (price == null) return 0;
   const cleaned = String(price).replace(/[^0-9.]/g, "");
   const n = parseFloat(cleaned);

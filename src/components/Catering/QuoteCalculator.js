@@ -1,18 +1,34 @@
 import React, { useMemo, useState } from "react";
 import { useCurrency } from "../../utils/currency";
 
-const TIERS = [
+export const CATERING_TIERS = [
   { id: "standard", label: "Standard · ₱180/head", price: 180, desc: "Pasta + sweets + drinks" },
   { id: "premium", label: "Premium · ₱280/head", price: 280, desc: "2 mains + desserts + drinks" },
   { id: "deluxe", label: "Deluxe · ₱380/head", price: 380, desc: "Lechon belly + full spread" },
 ];
 
-const ADDONS = [
+export const CATERING_ADDONS = [
   { id: "dessert", label: "Dessert bar", price: 2500, perHead: false },
   { id: "lechon", label: "Lechon station", price: 6000, perHead: false },
   { id: "drinks", label: "Drinks package", price: 60, perHead: true },
   { id: "crew", label: "Service crew", price: 1500, perHead: false },
 ];
+
+export function calcCateringQuote({ guests, tierId, addons }) {
+  const g = Math.max(10, Math.min(1000, Number(guests) || 0));
+  const tier =
+    CATERING_TIERS.find((t) => t.id === tierId) || CATERING_TIERS[1];
+  let sum = g * tier.price;
+  (addons || []).forEach((id) => {
+    const a = CATERING_ADDONS.find((x) => x.id === id);
+    if (!a) return;
+    sum += a.perHead ? a.price * g : a.price;
+  });
+  return Math.round(sum);
+}
+
+const TIERS = CATERING_TIERS;
+const ADDONS = CATERING_ADDONS;
 
 const QuoteCalculator = () => {
   const [guests, setGuests] = useState(50);
@@ -23,16 +39,10 @@ const QuoteCalculator = () => {
 
   const tierObj = TIERS.find((t) => t.id === tier) || TIERS[1];
 
-  const total = useMemo(() => {
-    const g = Math.max(10, Math.min(1000, Number(guests) || 0));
-    let sum = g * tierObj.price;
-    addons.forEach((id) => {
-      const a = ADDONS.find((x) => x.id === id);
-      if (!a) return;
-      sum += a.perHead ? a.price * g : a.price;
-    });
-    return Math.round(sum);
-  }, [guests, tierObj, addons]);
+  const total = useMemo(
+    () => calcCateringQuote({ guests, tierId: tier, addons }),
+    [guests, tier, addons]
+  );
 
   const toggleAddon = (id) => {
     setAddons((prev) => (prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]));

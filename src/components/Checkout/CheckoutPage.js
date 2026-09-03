@@ -37,6 +37,8 @@ function makeOrderId() {
   return `SD-${y}${m}${day}-${rand}`;
 }
 
+export { makeOrderId, validate };
+
 function validate(values) {
   const errors = {};
   if (!values.name || values.name.trim().length < 2) {

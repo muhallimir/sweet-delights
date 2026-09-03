@@ -31,7 +31,7 @@ import Gallery from "./components/Gallery/Gallery";
 import Faq from "./components/Faq/Faq";
 import ChatWidget from "./components/Chat/ChatWidget";
 
-function Home() {
+export function Home() {
   return (
     <>
       <Hero />

@@ -79,6 +79,8 @@ function cartReducer(state, action) {
   }
 }
 
+export { cartReducer, toCartItem };
+
 function loadInitialCart() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
