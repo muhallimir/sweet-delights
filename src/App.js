@@ -8,6 +8,7 @@ import BestsellersRail from "./components/Bestsellers/BestsellersRail";
 import DailyDeal from "./components/Deal/DailyDeal";
 import BoxBuilder from "./components/BoxBuilder/BoxBuilder";
 import SubscribeBox from "./components/Subscriptions/SubscribeBox";
+import Stores from "./components/Stores/Stores";
 import Testimonials from "./components/Testimonials/Testimonials";
 import Newsletter from "./components/Newsletter/Newsletter";
 import Catering from "./components/Catering/Catering";
@@ -47,6 +48,9 @@ function Home() {
       </Reveal>
       <Reveal>
         <Testimonials />
+      </Reveal>
+      <Reveal>
+        <Stores />
       </Reveal>
       <Reveal>
         <Newsletter />
