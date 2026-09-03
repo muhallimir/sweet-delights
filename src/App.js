@@ -21,6 +21,8 @@ import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./components/Cart/CartDrawer";
 import CheckoutPage from "./components/Checkout/CheckoutPage";
 import TrackPage from "./components/Track/TrackPage";
+import BlogGrid from "./components/Blog/BlogGrid";
+import BlogArticle from "./components/Blog/BlogArticle";
 
 function Home() {
   return (
@@ -53,6 +55,9 @@ function Home() {
         <Stores />
       </Reveal>
       <Reveal>
+        <BlogGrid />
+      </Reveal>
+      <Reveal>
         <Newsletter />
       </Reveal>
       <Reveal>
@@ -75,6 +80,7 @@ function App() {
           <Route exact path="/" component={Home} />
           <Route exact path="/checkout" component={CheckoutPage} />
           <Route exact path="/track" component={TrackPage} />
+          <Route exact path="/blog/:slug" component={BlogArticle} />
           <Route component={NotFound} />
         </Switch>
         <CartDrawer />
