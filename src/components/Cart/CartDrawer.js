@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { formatPeso, deliveryFee } from "../../utils/format";
+import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
+import PromoForm from "../Promo/PromoForm";
 import {
   CartOverlay,
   CartAside,
@@ -48,8 +50,27 @@ const CartDrawer = () => {
     };
   }, [isCartOpen, closeCart]);
 
-  const fee = deliveryFee(subtotal);
-  const total = subtotal + fee;
+  const [promoCode, setPromoCode] = useState(() => getStoredPromo());
+
+  useEffect(() => {
+    if (isCartOpen) setPromoCode(getStoredPromo());
+  }, [isCartOpen]);
+
+  const baseFee = deliveryFee(subtotal);
+  const promoCalc = calcPromo(subtotal, baseFee, promoCode);
+  const fee = promoCalc.fee;
+  const promoDiscount = promoCalc.discount;
+  const total = promoCalc.total;
+
+  const applyPromo = (code) => {
+    setStoredPromo(code);
+    setPromoCode(code);
+  };
+
+  const removePromo = () => {
+    clearStoredPromo();
+    setPromoCode("");
+  };
 
   return (
     <>
@@ -142,10 +163,17 @@ const CartDrawer = () => {
         </CartBody>
         {items.length > 0 && (
           <CartFooter>
+            <PromoForm appliedCode={promoCode} onApply={applyPromo} onRemove={removePromo} />
             <div className="row">
               <span>Subtotal</span>
               <span>{formatPeso(subtotal)}</span>
             </div>
+            {promoDiscount > 0 && (
+              <div className="row">
+                <span>Promo ({promoCode})</span>
+                <span>−{formatPeso(promoDiscount)}</span>
+              </div>
+            )}
             <div className="row">
               <span>Delivery</span>
               <span>{fee === 0 ? "FREE" : formatPeso(fee)}</span>

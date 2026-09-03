@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { formatPeso, deliveryFee } from "../../utils/format";
+import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
+import PromoForm from "../Promo/PromoForm";
 import {
   CheckoutWrap,
   CheckoutInner,
@@ -68,9 +70,17 @@ const CheckoutPage = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [placedOrder, setPlacedOrder] = useState(null);
+  const [promoCode, setPromoCode] = useState(() => getStoredPromo());
 
-  const fee = useMemo(() => deliveryFee(subtotal), [subtotal]);
-  const total = subtotal + fee;
+  useEffect(() => {
+    setPromoCode(getStoredPromo());
+  }, []);
+
+  const baseFee = useMemo(() => deliveryFee(subtotal), [subtotal]);
+  const promoCalc = useMemo(() => calcPromo(subtotal, baseFee, promoCode), [subtotal, baseFee, promoCode]);
+  const fee = promoCalc.fee;
+  const promoDiscount = promoCalc.discount;
+  const total = promoCalc.total;
 
   const set = (k) => (e) => {
     const v = e.target.value;
@@ -98,6 +108,8 @@ const CheckoutPage = () => {
       customer: { ...values },
       items: items.map((i) => ({ ...i })),
       subtotal,
+      promoCode: promoCode || "",
+      promoDiscount,
       fee,
       total,
     };
@@ -110,6 +122,8 @@ const CheckoutPage = () => {
       // ignore storage errors
     }
     clearCart();
+    clearStoredPromo();
+    setPromoCode("");
     setPlacedOrder(order);
     window.scrollTo(0, 0);
   };
@@ -149,6 +163,12 @@ const CheckoutPage = () => {
                   {placedOrder.customer.address}
                 </span>
               </SummaryRow>
+              {placedOrder.promoDiscount > 0 && (
+                <SummaryRow>
+                  <span>Promo ({placedOrder.promoCode})</span>
+                  <span>−{formatPeso(placedOrder.promoDiscount)}</span>
+                </SummaryRow>
+              )}
               <TotalRow>
                 <span>Total</span>
                 <span>{formatPeso(placedOrder.total)}</span>
@@ -286,6 +306,17 @@ const CheckoutPage = () => {
         </Card>
         <Card aria-label="Order summary">
           <h2 style={{ marginTop: 0 }}>Order summary</h2>
+          <PromoForm
+            appliedCode={promoCode}
+            onApply={(code) => {
+              setStoredPromo(code);
+              setPromoCode(code);
+            }}
+            onRemove={() => {
+              clearStoredPromo();
+              setPromoCode("");
+            }}
+          />
           {items.length === 0 ? (
             <p style={{ opacity: 0.8 }}>
               No items yet.{" "}
@@ -308,6 +339,12 @@ const CheckoutPage = () => {
                 <span>Subtotal</span>
                 <span>{formatPeso(subtotal)}</span>
               </SummaryRow>
+              {promoDiscount > 0 && (
+                <SummaryRow>
+                  <span>Promo ({promoCode})</span>
+                  <span>−{formatPeso(promoDiscount)}</span>
+                </SummaryRow>
+              )}
               <SummaryRow>
                 <span>Delivery</span>
                 <span>{fee === 0 ? "FREE" : formatPeso(fee)}</span>
