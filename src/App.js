@@ -23,6 +23,7 @@ import CheckoutPage from "./components/Checkout/CheckoutPage";
 import TrackPage from "./components/Track/TrackPage";
 import BlogGrid from "./components/Blog/BlogGrid";
 import BlogArticle from "./components/Blog/BlogArticle";
+import Gallery from "./components/Gallery/Gallery";
 
 function Home() {
   return (
@@ -57,6 +58,7 @@ function Home() {
       <Reveal>
         <BlogGrid />
       </Reveal>
+      <Gallery />
       <Reveal>
         <Newsletter />
       </Reveal>
