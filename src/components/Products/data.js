@@ -37,6 +37,7 @@ export const productData = [
     reviewsCount: 212,
     diet: { nutFree: true, glutenFree: true, vegan: false, dairyFree: false },
     allergens: ["egg", "milk"],
+    nutrition: { calories: 180, serving: "1 tub (120g)", ingredients: "Eggs, condensed milk, sugar, vanilla" }
   },
   {
     id: "coconut-macaroons",
@@ -52,6 +53,7 @@ export const productData = [
     reviewsCount: 186,
     diet: { nutFree: false, glutenFree: true, vegan: false, dairyFree: true },
     allergens: ["egg", "coconut"],
+    nutrition: { calories: 290, serving: "6 pcs (90g)", ingredients: "Desiccated coconut, condensed milk, egg whites, sugar" }
   },
   {
     id: "boracay-salad",
@@ -67,6 +69,7 @@ export const productData = [
     reviewsCount: 143,
     diet: { nutFree: false, glutenFree: true, vegan: false, dairyFree: false },
     allergens: ["milk", "coconut"],
+    nutrition: { calories: 210, serving: "1 cup (150g)", ingredients: "Coconut meat, cream, condensed milk, nata de coco" }
   },
   {
     id: "combo-delights",
@@ -82,6 +85,7 @@ export const productData = [
     reviewsCount: 231,
     diet: { nutFree: false, glutenFree: true, vegan: false, dairyFree: false },
     allergens: ["egg", "milk", "coconut"],
+    nutrition: { calories: 470, serving: "6 macaroons + 1 tub flan", ingredients: "Coconut macaroons, leche flan (eggs, milk, sugar)" }
   },
   {
     id: "mojitos-drink",
@@ -97,6 +101,7 @@ export const productData = [
     reviewsCount: 98,
     diet: { nutFree: true, glutenFree: true, vegan: true, dairyFree: true },
     allergens: [],
+    nutrition: { calories: 90, serving: "1 bottle (350ml)", ingredients: "Mint, calamansi, soda water, cane sugar" }
   },
 ];
 
@@ -115,6 +120,7 @@ export const productDataMeal = [
     reviewsCount: 167,
     diet: { nutFree: true, glutenFree: false, vegan: false, dairyFree: false },
     allergens: ["wheat", "egg", "milk"],
+    nutrition: { calories: 420, serving: "1 plate (250g)", ingredients: "Pasta, ground pork, tomato sauce, cheese, sugar" }
   },
   {
     id: "tuna-carbonara",
@@ -130,6 +136,7 @@ export const productDataMeal = [
     reviewsCount: 154,
     diet: { nutFree: true, glutenFree: false, vegan: false, dairyFree: false },
     allergens: ["wheat", "milk", "fish"],
+    nutrition: { calories: 480, serving: "1 plate (250g)", ingredients: "Pasta, tuna, cream, cheese, chili flakes" }
   },
   {
     id: "pancit-palabok",
@@ -145,6 +152,7 @@ export const productDataMeal = [
     reviewsCount: 198,
     diet: { nutFree: true, glutenFree: false, vegan: false, dairyFree: true },
     allergens: ["wheat", "egg", "shrimp"],
+    nutrition: { calories: 450, serving: "1 plate (250g)", ingredients: "Rice noodles, shrimp, egg, chicharon, palabok sauce" }
   },
 ];
 

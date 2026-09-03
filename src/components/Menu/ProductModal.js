@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useCart } from "../../context/CartContext";
 import { formatPeso } from "../../utils/format";
 import Reviews from "../Reviews/Reviews";
+import NutritionModal from "../Nutrition/NutritionModal";
 
 const Overlay = styled.div`
   position: fixed;
@@ -127,6 +128,7 @@ const AddBtn = styled.button`
 const ProductModal = ({ product, onClose }) => {
   const { addToCart } = useCart();
   const [qty, setQty] = useState(1);
+  const [showNutrition, setShowNutrition] = useState(false);
   const productId = product ? product.id : null;
 
   useEffect(() => {
@@ -171,7 +173,15 @@ const ProductModal = ({ product, onClose }) => {
             <p className="price">{formatPeso(unit)}</p>
             <p style={{ fontSize: ".85rem", opacity: 0.7 }}>
               Category: {product.category || "sweets"} · Best served fresh daily
+              {(product.allergens && product.allergens.length > 0) ? ` · Contains: ${product.allergens.join(", ")}` : " · No major allergens declared"}
             </p>
+            <button
+              type="button"
+              onClick={() => setShowNutrition(true)}
+              style={{ background: "transparent", border: "1px solid rgba(255,255,255,.3)", color: "#fff", borderRadius: 999, padding: ".45rem 1rem", cursor: "pointer", marginBottom: ".6rem" }}
+            >
+              View nutrition · {product.nutrition ? `${product.nutrition.calories} kcal` : ""}
+            </button>
             <QtyRow>
               <button
                 type="button"
@@ -213,6 +223,7 @@ const ProductModal = ({ product, onClose }) => {
           </Body>
         </Dialog>
       </div>
+      {showNutrition && <NutritionModal product={product} onClose={() => setShowNutrition(false)} />}
     </Overlay>
   );
 };
