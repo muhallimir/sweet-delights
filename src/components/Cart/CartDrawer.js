@@ -5,8 +5,10 @@ import { deliveryFee } from "../../utils/format";
 import { useCurrency } from "../../utils/currency";
 import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
 import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, LOYALTY_VALUE } from "../../utils/loyalty";
+import { hasFreeDelivery } from "../../utils/loyaltyTier";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
+import TierCard from "../Loyalty/TierCard";
 import WishlistSection from "../Favorites/WishlistSection";
 import DeliveryEstimator from "../Delivery/DeliveryEstimator";
 import {
@@ -70,10 +72,11 @@ const CartDrawer = () => {
   }, [isCartOpen]);
 
   const baseFee = deliveryFee(subtotal);
+  const tierFreeDelivery = hasFreeDelivery(loyaltyBalance, subtotal);
   const promoCalc = calcPromo(subtotal, baseFee, promoCode);
   const afterPromo = promoCalc.total - promoCalc.fee;
   const loyaltyCalc = calcLoyalty(afterPromo, loyaltyBalance, loyaltyRedeem);
-  const fee = promoCalc.fee;
+  const fee = tierFreeDelivery ? 0 : promoCalc.fee;
   const promoDiscount = promoCalc.discount;
   const loyaltyDiscount = loyaltyCalc.discount;
   const total = Math.max(0, promoCalc.total - loyaltyDiscount);
@@ -187,6 +190,7 @@ const CartDrawer = () => {
         </CartBody>
         {items.length > 0 && (
           <CartFooter>
+            <TierCard compact />
             <DeliveryEstimator subtotal={subtotal} compact />
             <PromoForm appliedCode={promoCode} onApply={applyPromo} onRemove={removePromo} />
             <LoyaltyBox
@@ -216,7 +220,7 @@ const CartDrawer = () => {
             )}
             <div className="row">
               <span>Delivery</span>
-              <span>{fee === 0 ? "FREE" : format(fee)}</span>
+              <span>{fee === 0 ? (tierFreeDelivery ? "FREE · tier perk" : "FREE") : format(fee)}</span>
             </div>
             <div className="row total">
               <span>Total</span>

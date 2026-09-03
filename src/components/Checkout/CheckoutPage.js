@@ -5,6 +5,8 @@ import { deliveryFee } from "../../utils/format";
 import { useCurrency } from "../../utils/currency";
 import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
 import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, addLoyaltyPoints, spendLoyaltyPoints, setLoyaltyBalance, LOYALTY_COST } from "../../utils/loyalty";
+import { hasFreeDelivery } from "../../utils/loyaltyTier";
+import TierCard from "../Loyalty/TierCard";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import FulfillmentPicker from "../Fulfillment/FulfillmentPicker";
@@ -102,7 +104,8 @@ const CheckoutPage = () => {
   const promoCalc = useMemo(() => calcPromo(subtotal, baseFee, promoCode), [subtotal, baseFee, promoCode]);
   const afterPromo = promoCalc.total - promoCalc.fee;
   const loyaltyCalc = useMemo(() => calcLoyalty(afterPromo, loyaltyBalance, loyaltyRedeem), [afterPromo, loyaltyBalance, loyaltyRedeem]);
-  const deliveryFeeFinal = fulfillment.type === "pickup" ? 0 : promoCalc.fee;
+  const tierFreeDelivery = hasFreeDelivery(loyaltyBalance, subtotal);
+  const deliveryFeeFinal = fulfillment.type === "pickup" || tierFreeDelivery ? 0 : promoCalc.fee;
   const promoDiscount = promoCalc.discount;
   const loyaltyDiscount = loyaltyCalc.discount;
   const giftFee = gift.wrap ? GIFT_WRAP_PRICE : 0;
@@ -138,7 +141,7 @@ const CheckoutPage = () => {
     setGift(gift);
     const usedReward = loyaltyCalc.applied;
     const earned = earnForTotal(preGiftTotal);
-    const finalFee = fulfillment.type === "pickup" ? 0 : promoCalc.fee;
+    const finalFee = fulfillment.type === "pickup" || tierFreeDelivery ? 0 : promoCalc.fee;
     const finalPreGift = Math.max(0, subtotal - promoDiscount - loyaltyDiscount + finalFee);
     const finalTotal = finalPreGift + giftFee;
     const order = {
@@ -220,6 +223,9 @@ const CheckoutPage = () => {
               {placedOrder.items.reduce((s, i) => s + (i.qty || 0), 0)} items ·{" "}
               {format(placedOrder.total)} · {placedOrder.customer.payment}
             </p>
+            <div style={{ marginTop: ".8rem" }}>
+              <TierCard compact />
+            </div>
             {placedOrder.fulfillmentLabel ? (
               <p style={{ background: "#10233b", border: "1px solid #2f5a8a", borderRadius: ".7rem", padding: ".6rem .9rem" }}>
                 {placedOrder.fulfillmentLabel}
@@ -428,6 +434,7 @@ const CheckoutPage = () => {
         </Card>
         <Card aria-label="Order summary">
           <h2 style={{ marginTop: 0 }}>Order summary</h2>
+          <TierCard />
           <PromoForm
             appliedCode={promoCode}
             onApply={(code) => {
