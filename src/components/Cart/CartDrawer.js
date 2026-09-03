@@ -7,6 +7,7 @@ import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, ear
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import WishlistSection from "../Favorites/WishlistSection";
+import DeliveryEstimator from "../Delivery/DeliveryEstimator";
 import {
   CartOverlay,
   CartAside,
@@ -177,6 +178,7 @@ const CartDrawer = () => {
         </CartBody>
         {items.length > 0 && (
           <CartFooter>
+            <DeliveryEstimator subtotal={subtotal} compact />
             <PromoForm appliedCode={promoCode} onApply={applyPromo} onRemove={removePromo} />
             <LoyaltyBox
               balance={loyaltyBalance}
