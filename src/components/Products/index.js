@@ -11,22 +11,33 @@ import {
   ProductPrice,
   ProductButton,
 } from "./ProductElements";
+import { useCart } from "../../context/CartContext";
 
-const Products = ({ heading, data }) => {
+const Products = ({ heading, data, id }) => {
+  const { addToCart } = useCart();
   return (
-    <ProductContainer>
+    <ProductContainer id={id}>
       <ProductHeading>{heading}</ProductHeading>
       <ProductWrapper>
         {/* mapping through the data */}
-        {data.map((product, index) => {
+        {data.map((product) => {
           return (
-            <ProductCard key={index}>
-              <ProductImg src={product.img} alt={product.alt} />
+            <ProductCard key={product.id || product.name}>
+              <ProductImg
+                src={product.img}
+                alt={product.alt || product.name}
+                loading="lazy"
+              />
               <ProductInfo>
                 <ProductTitle>{product.name}</ProductTitle>
                 <ProductDesc>{product.desc}</ProductDesc>
                 <ProductPrice>{product.price}</ProductPrice>
-                <ProductButton>{product.button}</ProductButton>
+                <ProductButton
+                  onClick={() => addToCart(product, 1)}
+                  aria-label={`Add ${product.name} to cart`}
+                >
+                  {product.button || "Add to cart"}
+                </ProductButton>
               </ProductInfo>
             </ProductCard>
           );
