@@ -25,6 +25,7 @@ import CheckoutPage from "./components/Checkout/CheckoutPage";
 import TrackPage from "./components/Track/TrackPage";
 import BlogGrid from "./components/Blog/BlogGrid";
 import BlogArticle from "./components/Blog/BlogArticle";
+import AdminPage from "./components/Admin/AdminPage";
 import Gallery from "./components/Gallery/Gallery";
 import Faq from "./components/Faq/Faq";
 import ChatWidget from "./components/Chat/ChatWidget";
@@ -94,6 +95,7 @@ function App() {
           <Route exact path="/checkout" component={CheckoutPage} />
           <Route exact path="/track" component={TrackPage} />
           <Route exact path="/blog/:slug" component={BlogArticle} />
+          <Route exact path="/admin" component={AdminPage} />
           <Route component={NotFound} />
         </Switch>
         <CartDrawer />
