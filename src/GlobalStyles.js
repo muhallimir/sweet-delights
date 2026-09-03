@@ -15,6 +15,20 @@ body {
   color: #fff;
   overflow-x: hidden;
 }
+:root {
+  --bg: #0d0d0d;
+  --fg: #fff;
+  --card: #161616;
+  --accent: #e3c987;
+}
+html[data-theme="light"] {
+  filter: invert(1) hue-rotate(180deg);
+  background: #fff;
+}
+html[data-theme="light"] img,
+html[data-theme="light"] iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
 img {
   max-width: 100%;
 }

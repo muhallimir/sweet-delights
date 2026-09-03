@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React, { useEffect } from "react";
 import { GlobalStyle } from "./GlobalStyles";
+import { getTheme, applyTheme } from "./utils/theme";
 import Hero from "./components/Hero";
 import { allProducts } from "./components/Products/data";
 import MenuExperience from "./components/Menu/MenuSection";
@@ -76,6 +78,10 @@ function Home() {
 }
 
 function App() {
+  useEffect(() => {
+    applyTheme(getTheme());
+  }, []);
+
   return (
     <Router>
       <CartProvider>
