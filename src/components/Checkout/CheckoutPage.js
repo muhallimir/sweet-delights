@@ -6,6 +6,8 @@ import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../
 import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, addLoyaltyPoints, spendLoyaltyPoints, setLoyaltyBalance, LOYALTY_COST } from "../../utils/loyalty";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
+import FulfillmentPicker from "../Fulfillment/FulfillmentPicker";
+import { getFulfillment, setFulfillment, validateFulfillment, fulfillmentLabel } from "../../utils/fulfillment";
 import {
   CheckoutWrap,
   CheckoutInner,
@@ -75,11 +77,14 @@ const CheckoutPage = () => {
   const [promoCode, setPromoCode] = useState(() => getStoredPromo());
   const [loyaltyBalance, setLoyaltyBalanceState] = useState(() => getLoyaltyBalance());
   const [loyaltyRedeem, setLoyaltyRedeemState] = useState(() => getLoyaltyRedeem());
+  const [fulfillment, setFulfillmentState] = useState(() => getFulfillment());
+  const [fulErrors, setFulErrors] = useState({});
 
   useEffect(() => {
     setPromoCode(getStoredPromo());
     setLoyaltyBalanceState(getLoyaltyBalance());
     setLoyaltyRedeemState(getLoyaltyRedeem());
+    setFulfillmentState(getFulfillment());
   }, []);
 
   const baseFee = useMemo(() => deliveryFee(subtotal), [subtotal]);
@@ -108,16 +113,22 @@ const CheckoutPage = () => {
   const submit = (e) => {
     e.preventDefault();
     const errs = validate(values);
+    const fErrs = validateFulfillment(fulfillment);
     setErrors(errs);
+    setFulErrors(fErrs);
     setTouched({ name: true, phone: true, address: true, payment: true });
     if (Object.keys(errs).length > 0) return;
+    if (Object.keys(fErrs).length > 0) return;
     if (items.length === 0) return;
+    setFulfillment(fulfillment);
     const usedReward = loyaltyCalc.applied;
     const earned = earnForTotal(total);
     const order = {
       id: makeOrderId(),
       date: new Date().toISOString(),
       customer: { ...values },
+      fulfillment: { ...fulfillment },
+      fulfillmentLabel: fulfillmentLabel(fulfillment),
       items: items.map((i) => ({ ...i })),
       subtotal,
       promoCode: promoCode || "",
@@ -125,8 +136,8 @@ const CheckoutPage = () => {
       loyaltyDiscount,
       loyaltyUsed: usedReward,
       loyaltyEarned: earned,
-      fee,
-      total,
+      fee: fulfillment.type === "pickup" ? 0 : fee,
+      total: fulfillment.type === "pickup" ? Math.max(0, promoCalc.total - promoCalc.fee - loyaltyDiscount) : total,
     };
     try {
       const raw = localStorage.getItem("sweet-delights-orders");
@@ -169,6 +180,11 @@ const CheckoutPage = () => {
               {placedOrder.items.reduce((s, i) => s + (i.qty || 0), 0)} items ·{" "}
               {formatPeso(placedOrder.total)} · {placedOrder.customer.payment}
             </p>
+            {placedOrder.fulfillmentLabel ? (
+              <p style={{ background: "#10233b", border: "1px solid #2f5a8a", borderRadius: ".7rem", padding: ".6rem .9rem" }}>
+                {placedOrder.fulfillmentLabel}
+              </p>
+            ) : null}
             <div style={{ marginTop: "1rem" }}>
               {placedOrder.items.map((i) => (
                 <SummaryRow key={i.id}>
@@ -224,6 +240,7 @@ const CheckoutPage = () => {
       </div>
       <CheckoutInner>
         <Card as="form" onSubmit={submit} noValidate aria-label="Checkout form">
+          <FulfillmentPicker value={fulfillment} errors={fulErrors} onChange={(v) => { setFulfillmentState(v); setFulErrors({}); }} />
           <Field>
             <label htmlFor="co-name">Full name *</label>
             <input
