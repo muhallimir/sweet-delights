@@ -3,7 +3,9 @@ import { Link, useHistory } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { formatPeso, deliveryFee } from "../../utils/format";
 import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
+import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, addLoyaltyPoints, spendLoyaltyPoints, setLoyaltyBalance, LOYALTY_COST } from "../../utils/loyalty";
 import PromoForm from "../Promo/PromoForm";
+import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import {
   CheckoutWrap,
   CheckoutInner,
@@ -71,16 +73,24 @@ const CheckoutPage = () => {
   const [touched, setTouched] = useState({});
   const [placedOrder, setPlacedOrder] = useState(null);
   const [promoCode, setPromoCode] = useState(() => getStoredPromo());
+  const [loyaltyBalance, setLoyaltyBalanceState] = useState(() => getLoyaltyBalance());
+  const [loyaltyRedeem, setLoyaltyRedeemState] = useState(() => getLoyaltyRedeem());
 
   useEffect(() => {
     setPromoCode(getStoredPromo());
+    setLoyaltyBalanceState(getLoyaltyBalance());
+    setLoyaltyRedeemState(getLoyaltyRedeem());
   }, []);
 
   const baseFee = useMemo(() => deliveryFee(subtotal), [subtotal]);
   const promoCalc = useMemo(() => calcPromo(subtotal, baseFee, promoCode), [subtotal, baseFee, promoCode]);
+  const afterPromo = promoCalc.total - promoCalc.fee;
+  const loyaltyCalc = useMemo(() => calcLoyalty(afterPromo, loyaltyBalance, loyaltyRedeem), [afterPromo, loyaltyBalance, loyaltyRedeem]);
   const fee = promoCalc.fee;
   const promoDiscount = promoCalc.discount;
-  const total = promoCalc.total;
+  const loyaltyDiscount = loyaltyCalc.discount;
+  const total = Math.max(0, promoCalc.total - loyaltyDiscount);
+  const earnPreview = earnForTotal(total);
 
   const set = (k) => (e) => {
     const v = e.target.value;
@@ -102,6 +112,8 @@ const CheckoutPage = () => {
     setTouched({ name: true, phone: true, address: true, payment: true });
     if (Object.keys(errs).length > 0) return;
     if (items.length === 0) return;
+    const usedReward = loyaltyCalc.applied;
+    const earned = earnForTotal(total);
     const order = {
       id: makeOrderId(),
       date: new Date().toISOString(),
@@ -110,6 +122,9 @@ const CheckoutPage = () => {
       subtotal,
       promoCode: promoCode || "",
       promoDiscount,
+      loyaltyDiscount,
+      loyaltyUsed: usedReward,
+      loyaltyEarned: earned,
       fee,
       total,
     };
@@ -124,7 +139,13 @@ const CheckoutPage = () => {
     clearCart();
     clearStoredPromo();
     setPromoCode("");
-    setPlacedOrder(order);
+    if (usedReward) spendLoyaltyPoints(LOYALTY_COST);
+    const newBal = addLoyaltyPoints(earned);
+    setLoyaltyBalanceState(newBal);
+    setLoyaltyRedeem(false);
+    setLoyaltyRedeemState(false);
+    setLoyaltyBalance(newBal);
+    setPlacedOrder({ ...order, loyaltyBalance: newBal });
     window.scrollTo(0, 0);
   };
 
@@ -169,10 +190,19 @@ const CheckoutPage = () => {
                   <span>−{formatPeso(placedOrder.promoDiscount)}</span>
                 </SummaryRow>
               )}
+              {placedOrder.loyaltyDiscount > 0 && (
+                <SummaryRow>
+                  <span>Loyalty reward</span>
+                  <span>−{formatPeso(placedOrder.loyaltyDiscount)}</span>
+                </SummaryRow>
+              )}
               <TotalRow>
                 <span>Total</span>
                 <span>{formatPeso(placedOrder.total)}</span>
               </TotalRow>
+              <p style={{ fontSize: ".9rem", opacity: 0.85 }}>
+                You earned {placedOrder.loyaltyEarned} pts. New balance: {placedOrder.loyaltyBalance} pts.
+              </p>
             </div>
             <PlaceOrderBtn as={Link} to="/" style={{ textDecoration: "none", textAlign: "center", display: "block" }}>
               Back to menu
@@ -317,6 +347,15 @@ const CheckoutPage = () => {
               setPromoCode("");
             }}
           />
+          <LoyaltyBox
+            balance={loyaltyBalance}
+            redeem={loyaltyRedeem}
+            earnPreview={earnPreview}
+            onToggle={(on) => {
+              setLoyaltyRedeem(on);
+              setLoyaltyRedeemState(on);
+            }}
+          />
           {items.length === 0 ? (
             <p style={{ opacity: 0.8 }}>
               No items yet.{" "}
@@ -343,6 +382,12 @@ const CheckoutPage = () => {
                 <SummaryRow>
                   <span>Promo ({promoCode})</span>
                   <span>−{formatPeso(promoDiscount)}</span>
+                </SummaryRow>
+              )}
+              {loyaltyDiscount > 0 && (
+                <SummaryRow>
+                  <span>Loyalty (100pts)</span>
+                  <span>−{formatPeso(loyaltyDiscount)}</span>
                 </SummaryRow>
               )}
               <SummaryRow>

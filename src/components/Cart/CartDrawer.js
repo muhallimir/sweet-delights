@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { formatPeso, deliveryFee } from "../../utils/format";
 import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../../utils/promo";
+import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, LOYALTY_VALUE } from "../../utils/loyalty";
 import PromoForm from "../Promo/PromoForm";
+import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import {
   CartOverlay,
   CartAside,
@@ -51,16 +53,26 @@ const CartDrawer = () => {
   }, [isCartOpen, closeCart]);
 
   const [promoCode, setPromoCode] = useState(() => getStoredPromo());
+  const [loyaltyBalance, setLoyaltyBalance] = useState(() => getLoyaltyBalance());
+  const [loyaltyRedeem, setLoyaltyRedeemState] = useState(() => getLoyaltyRedeem());
 
   useEffect(() => {
-    if (isCartOpen) setPromoCode(getStoredPromo());
+    if (isCartOpen) {
+      setPromoCode(getStoredPromo());
+      setLoyaltyBalance(getLoyaltyBalance());
+      setLoyaltyRedeemState(getLoyaltyRedeem());
+    }
   }, [isCartOpen]);
 
   const baseFee = deliveryFee(subtotal);
   const promoCalc = calcPromo(subtotal, baseFee, promoCode);
+  const afterPromo = promoCalc.total - promoCalc.fee;
+  const loyaltyCalc = calcLoyalty(afterPromo, loyaltyBalance, loyaltyRedeem);
   const fee = promoCalc.fee;
   const promoDiscount = promoCalc.discount;
-  const total = promoCalc.total;
+  const loyaltyDiscount = loyaltyCalc.discount;
+  const total = Math.max(0, promoCalc.total - loyaltyDiscount);
+  const earnPreview = earnForTotal(total);
 
   const applyPromo = (code) => {
     setStoredPromo(code);
@@ -164,6 +176,15 @@ const CartDrawer = () => {
         {items.length > 0 && (
           <CartFooter>
             <PromoForm appliedCode={promoCode} onApply={applyPromo} onRemove={removePromo} />
+            <LoyaltyBox
+              balance={loyaltyBalance}
+              redeem={loyaltyRedeem}
+              earnPreview={earnPreview}
+              onToggle={(on) => {
+                setLoyaltyRedeem(on);
+                setLoyaltyRedeemState(on);
+              }}
+            />
             <div className="row">
               <span>Subtotal</span>
               <span>{formatPeso(subtotal)}</span>
@@ -174,6 +195,12 @@ const CartDrawer = () => {
                 <span>−{formatPeso(promoDiscount)}</span>
               </div>
             )}
+            {loyaltyDiscount > 0 && (
+              <div className="row">
+                <span>Loyalty (100pts)</span>
+                <span>−{formatPeso(loyaltyDiscount)}</span>
+              </div>
+            )}
             <div className="row">
               <span>Delivery</span>
               <span>{fee === 0 ? "FREE" : formatPeso(fee)}</span>
@@ -182,7 +209,7 @@ const CartDrawer = () => {
               <span>Total</span>
               <span>{formatPeso(total)}</span>
             </div>
-            <p className="hint">Free delivery on orders ₱500 and up.</p>
+            <p className="hint">Free delivery on orders ₱500 and up. Earn 1pt per ₱1. 100pts = {formatPeso(LOYALTY_VALUE)} off.</p>
             <CheckoutBtn as={Link} to="/checkout" onClick={closeCart}>
               Go to Checkout
             </CheckoutBtn>
