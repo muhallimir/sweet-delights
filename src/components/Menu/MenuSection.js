@@ -9,7 +9,7 @@ import {
   ProductButton,
 } from "../Products/ProductElements";
 import { useCart } from "../../context/CartContext";
-import { CATEGORIES } from "../Products/data";
+import { CATEGORIES, DIET_FILTERS } from "../Products/data";
 import { getFavorites, toggleFavorite } from "../../utils/favorites";
 import { starText } from "../../utils/reviews";
 import ProductModal from "./ProductModal";
@@ -43,6 +43,7 @@ const MenuExperience = ({ heading, products, id }) => {
   const [selected, setSelected] = useState(null);
   const [favorites, setFavorites] = useState(() => getFavorites());
   const [savedOnly, setSavedOnly] = useState(false);
+  const [diets, setDiets] = useState([]);
 
   useEffect(() => {
     const onFav = (e) => {
@@ -53,6 +54,10 @@ const MenuExperience = ({ heading, products, id }) => {
     return () => window.removeEventListener("sd:favorites", onFav);
   }, []);
 
+  const toggleDiet = (id) => {
+    setDiets((prev) => (prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]));
+  };
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     let list = (products || []).filter((p) => {
@@ -62,10 +67,11 @@ const MenuExperience = ({ heading, products, id }) => {
         (p.name || "").toLowerCase().includes(q) ||
         (p.desc || "").toLowerCase().includes(q);
       const matchFav = !savedOnly || favorites.includes(p.id);
-      return matchCat && matchQ && matchFav;
+      const matchDiet = diets.length === 0 || diets.every((d) => p.diet && p.diet[d]);
+      return matchCat && matchQ && matchFav && matchDiet;
     });
     return sortProducts(list, sort);
-  }, [products, category, query, sort, savedOnly, favorites]);
+  }, [products, category, query, sort, savedOnly, favorites, diets]);
 
   return (
     <MenuSection id={id || "menu"} aria-label="Bakery menu">
@@ -97,6 +103,38 @@ const MenuExperience = ({ heading, products, id }) => {
             ♥ Saved ({favorites.length})
           </TabButton>
         </Tabs>
+      </Controls>
+      <Controls>
+        <div role="group" aria-label="Diet and allergen filters" style={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
+          {DIET_FILTERS.map((d) => {
+            const active = diets.includes(d.id);
+            return (
+              <button
+                key={d.id}
+                type="button"
+                onClick={() => toggleDiet(d.id)}
+                aria-pressed={active}
+                style={{
+                  borderRadius: 999,
+                  border: active ? "1px solid #e3c987" : "1px solid rgba(255,255,255,.25)",
+                  background: active ? "#e3c987" : "transparent",
+                  color: active ? "#111" : "#fff",
+                  padding: ".4rem .9rem",
+                  cursor: "pointer",
+                  fontSize: ".85rem",
+                  fontWeight: active ? 800 : 400,
+                }}
+              >
+                <span aria-hidden="true">{d.icon} </span>{d.label}
+              </button>
+            );
+          })}
+          {diets.length > 0 ? (
+            <button type="button" onClick={() => setDiets([])} style={{ background: "transparent", border: "none", color: "#ff9a9a", cursor: "pointer", textDecoration: "underline", fontSize: ".85rem" }}>
+              Clear diet filters
+            </button>
+          ) : null}
+        </div>
       </Controls>
       <Controls>
         <label htmlFor="menu-search" style={{ position: "absolute", left: "-9999px" }}>
@@ -180,6 +218,12 @@ const MenuExperience = ({ heading, products, id }) => {
               <ProductTitle>{product.name}</ProductTitle>
               <div style={{ color: "#e3c987", fontSize: ".9rem" }} aria-label={`Rated ${product.rating || 5} out of 5`}>
                 {starText(product.rating || 5)} <span style={{ color: "#fff", opacity: 0.7, fontSize: ".8rem" }}>({product.reviewsCount || 0})</span>
+              </div>
+              <div style={{ display: "flex", gap: ".35rem", flexWrap: "wrap", justifyContent: "center", margin: ".35rem 0" }} aria-label="Diet info">
+                {product.diet && product.diet.vegan ? <span title="Vegan" style={{ fontSize: ".8rem", background: "#14351f", borderRadius: 999, padding: ".1rem .55rem" }}>🌱 vegan</span> : null}
+                {product.diet && product.diet.glutenFree ? <span title="Gluten-free" style={{ fontSize: ".8rem", background: "#222", borderRadius: 999, padding: ".1rem .55rem", border: "1px solid rgba(255,255,255,.15)" }}>GF</span> : null}
+                {product.diet && product.diet.nutFree ? <span title="Nut-free" style={{ fontSize: ".8rem", background: "#222", borderRadius: 999, padding: ".1rem .55rem", border: "1px solid rgba(255,255,255,.15)" }}>🥜‍🚫</span> : null}
+                {product.diet && product.diet.dairyFree ? <span title="Dairy-free" style={{ fontSize: ".8rem", background: "#222", borderRadius: 999, padding: ".1rem .55rem", border: "1px solid rgba(255,255,255,.15)" }}>DF</span> : null}
               </div>
               <ProductDesc>{product.desc}</ProductDesc>
               <ProductPrice>{product.price}</ProductPrice>

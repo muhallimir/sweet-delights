@@ -15,6 +15,13 @@ export const CATEGORIES = [
   { id: "combos", label: "Combos" },
 ];
 
+export const DIET_FILTERS = [
+  { id: "nutFree", label: "Nut-free", icon: "🥜‍🚫" },
+  { id: "glutenFree", label: "Gluten-free", icon: "🌾‍🚫" },
+  { id: "vegan", label: "Vegan", icon: "🌱" },
+  { id: "dairyFree", label: "Dairy-free", icon: "🥛‍🚫" },
+];
+
 export const productData = [
   {
     id: "leche-flan",
@@ -28,6 +35,8 @@ export const productData = [
     button: "Add to cart",
     rating: 4.9,
     reviewsCount: 212,
+    diet: { nutFree: true, glutenFree: true, vegan: false, dairyFree: false },
+    allergens: ["egg", "milk"],
   },
   {
     id: "coconut-macaroons",
@@ -41,6 +50,8 @@ export const productData = [
     button: "Add to cart",
     rating: 4.8,
     reviewsCount: 186,
+    diet: { nutFree: false, glutenFree: true, vegan: false, dairyFree: true },
+    allergens: ["egg", "coconut"],
   },
   {
     id: "boracay-salad",
@@ -54,6 +65,8 @@ export const productData = [
     button: "Add to cart",
     rating: 4.7,
     reviewsCount: 143,
+    diet: { nutFree: false, glutenFree: true, vegan: false, dairyFree: false },
+    allergens: ["milk", "coconut"],
   },
   {
     id: "combo-delights",
@@ -67,6 +80,8 @@ export const productData = [
     button: "Add to cart",
     rating: 4.9,
     reviewsCount: 231,
+    diet: { nutFree: false, glutenFree: true, vegan: false, dairyFree: false },
+    allergens: ["egg", "milk", "coconut"],
   },
   {
     id: "mojitos-drink",
@@ -80,6 +95,8 @@ export const productData = [
     button: "Add to cart",
     rating: 4.6,
     reviewsCount: 98,
+    diet: { nutFree: true, glutenFree: true, vegan: true, dairyFree: true },
+    allergens: [],
   },
 ];
 
@@ -96,6 +113,8 @@ export const productDataMeal = [
     button: "Add to cart",
     rating: 4.7,
     reviewsCount: 167,
+    diet: { nutFree: true, glutenFree: false, vegan: false, dairyFree: false },
+    allergens: ["wheat", "egg", "milk"],
   },
   {
     id: "tuna-carbonara",
@@ -109,6 +128,8 @@ export const productDataMeal = [
     button: "Add to cart",
     rating: 4.8,
     reviewsCount: 154,
+    diet: { nutFree: true, glutenFree: false, vegan: false, dairyFree: false },
+    allergens: ["wheat", "milk", "fish"],
   },
   {
     id: "pancit-palabok",
@@ -122,6 +143,8 @@ export const productDataMeal = [
     button: "Add to cart",
     rating: 4.9,
     reviewsCount: 198,
+    diet: { nutFree: true, glutenFree: false, vegan: false, dairyFree: true },
+    allergens: ["wheat", "egg", "shrimp"],
   },
 ];
 
