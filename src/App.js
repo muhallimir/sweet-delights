@@ -4,6 +4,8 @@ import Hero from "./components/Hero";
 import { allProducts } from "./components/Products/data";
 import MenuExperience from "./components/Menu/MenuSection";
 import Featured from "./components/Featured";
+import Testimonials from "./components/Testimonials/Testimonials";
+import Newsletter from "./components/Newsletter/Newsletter";
 import Footer from "./components/Footer";
 import Typical from "react-typical";
 import { CartProvider } from "./context/CartContext";
@@ -26,6 +28,8 @@ function Home() {
         products={allProducts}
       />
       <Featured />
+      <Testimonials />
+      <Newsletter />
       <Footer />
     </>
   );
