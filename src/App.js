@@ -19,6 +19,7 @@ import Typical from "react-typical";
 import { CartProvider } from "./context/CartContext";
 import CartDrawer from "./components/Cart/CartDrawer";
 import CheckoutPage from "./components/Checkout/CheckoutPage";
+import TrackPage from "./components/Track/TrackPage";
 
 function Home() {
   return (
@@ -69,6 +70,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/checkout" component={CheckoutPage} />
+          <Route exact path="/track" component={TrackPage} />
           <Route component={NotFound} />
         </Switch>
         <CartDrawer />

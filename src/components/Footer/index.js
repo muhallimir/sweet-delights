@@ -26,6 +26,7 @@ const Footer = () => {
             </p>
             <p style={{ marginTop: ".6rem" }}>
               <Link to="/checkout">Checkout</Link> ·{" "}
+              <Link to="/track">Track order</Link> ·{" "}
               <a href="#menu">Menu</a> · <a href="#catering">Catering</a>
             </p>
           </div>
