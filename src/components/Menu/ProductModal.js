@@ -4,6 +4,8 @@ import { useCart } from "../../context/CartContext";
 import { useCurrency } from "../../utils/currency";
 import Reviews from "../Reviews/Reviews";
 import NutritionModal from "../Nutrition/NutritionModal";
+import PreorderToggle from "../Preorder/PreorderToggle";
+import { addScheduledItem, getScheduledItems } from "../../utils/scheduled";
 
 const Overlay = styled.div`
   position: fixed;
@@ -130,10 +132,17 @@ const ProductModal = ({ product, onClose }) => {
   const { format } = useCurrency();
   const [qty, setQty] = useState(1);
   const [showNutrition, setShowNutrition] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState(null);
   const productId = product ? product.id : null;
 
   useEffect(() => {
     setQty(1);
+    if (productId) {
+      const existing = getScheduledItems().find((i) => i.productId === productId);
+      setScheduledAt(existing ? existing.scheduledAt : null);
+    } else {
+      setScheduledAt(null);
+    }
   }, [productId]);
 
   useEffect(() => {
@@ -232,6 +241,32 @@ const ProductModal = ({ product, onClose }) => {
             <AddBtn onClick={() => addToCart(product, qty)}>
               Add {qty} to cart · {format(unit * qty)}
             </AddBtn>
+            <div style={{ marginTop: ".7rem" }}>
+              <PreorderToggle
+                productId={product.id}
+                scheduledAt={scheduledAt}
+                onSchedule={({ date, time, scheduledAt }) => {
+                  addScheduledItem({
+                    productId: product.id,
+                    name: product.name,
+                    qty,
+                    priceValue: unit,
+                    img: product.img,
+                    date,
+                    time,
+                    scheduledAt,
+                  });
+                  setScheduledAt(scheduledAt);
+                }}
+                onCancel={() => {
+                  const existing = getScheduledItems().find((i) => i.productId === product.id);
+                  if (existing) {
+                    import("../../utils/scheduled").then((m) => m.removeScheduledItem(existing.id));
+                  }
+                  setScheduledAt(null);
+                }}
+              />
+            </div>
             <Reviews product={product} />
           </Body>
         </Dialog>

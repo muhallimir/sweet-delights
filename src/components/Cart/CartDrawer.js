@@ -9,6 +9,7 @@ import { hasFreeDelivery } from "../../utils/loyaltyTier";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import TierCard from "../Loyalty/TierCard";
+import ScheduledCartSection from "../Preorder/ScheduledCartSection";
 import WishlistSection from "../Favorites/WishlistSection";
 import DeliveryEstimator from "../Delivery/DeliveryEstimator";
 import {
@@ -122,6 +123,7 @@ const CartDrawer = () => {
           ) : (
             <>
               <ClearBtn onClick={clearCart}>Clear cart</ClearBtn>
+              <ScheduledCartSection />
               {items.map((item) => (
                 <CartItem key={item.id}>
                   {item.img ? (

@@ -7,6 +7,8 @@ import { getStoredPromo, setStoredPromo, clearStoredPromo, calcPromo } from "../
 import { getLoyaltyBalance, getLoyaltyRedeem, setLoyaltyRedeem, calcLoyalty, earnForTotal, addLoyaltyPoints, spendLoyaltyPoints, setLoyaltyBalance, LOYALTY_COST } from "../../utils/loyalty";
 import { hasFreeDelivery } from "../../utils/loyaltyTier";
 import TierCard from "../Loyalty/TierCard";
+import { getScheduledItems, clearScheduledItems } from "../../utils/scheduled";
+import { formatScheduledFor } from "../../utils/preorder";
 import PromoForm from "../Promo/PromoForm";
 import LoyaltyBox from "../Loyalty/LoyaltyBox";
 import FulfillmentPicker from "../Fulfillment/FulfillmentPicker";
@@ -71,6 +73,7 @@ const CheckoutPage = () => {
   const { items, subtotal, clearCart } = useCart();
   const { format } = useCurrency();
   const history = useHistory();
+  const [scheduledItems, setScheduledItemsState] = useState(() => getScheduledItems());
   const [values, setValues] = useState({
     name: "",
     phone: "",
@@ -98,6 +101,7 @@ const CheckoutPage = () => {
     setLoyaltyRedeemState(getLoyaltyRedeem());
     setFulfillmentState(getFulfillment());
     setGiftState(getGift());
+    setScheduledItemsState(getScheduledItems());
   }, []);
 
   const baseFee = useMemo(() => deliveryFee(subtotal), [subtotal]);
@@ -153,6 +157,7 @@ const CheckoutPage = () => {
       gift: { ...gift },
       giftFee,
       items: items.map((i) => ({ ...i })),
+      scheduledItems: scheduledItems.map((i) => ({ ...i })),
       subtotal,
       promoCode: promoCode || "",
       promoDiscount,
@@ -173,6 +178,8 @@ const CheckoutPage = () => {
     clearCart();
     clearStoredPromo();
     setPromoCode("");
+    clearScheduledItems();
+    setScheduledItemsState([]);
     if (usedReward) spendLoyaltyPoints(LOYALTY_COST);
     const newBal = addLoyaltyPoints(earned);
     setLoyaltyBalanceState(newBal);
@@ -245,6 +252,21 @@ const CheckoutPage = () => {
                   <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : format((i.priceValue || 0) * (i.qty || 0))}</span>
                 </SummaryRow>
               ))}
+              {placedOrder.scheduledItems && placedOrder.scheduledItems.length > 0 ? (
+                <div style={{ marginTop: ".7rem", background: "#10233b", border: "1px solid #2f5a8a", borderRadius: ".7rem", padding: ".6rem .8rem" }}>
+                  <strong style={{ color: "#a9c8e8" }}>Scheduled ({placedOrder.scheduledItems.length})</strong>
+                  {placedOrder.scheduledItems.map((si) => (
+                    <div key={si.id} style={{ display: "flex", justifyContent: "space-between", fontSize: ".88rem", marginTop: ".35rem" }}>
+                      <span>
+                        {si.qty}× {si.name}
+                        <br />
+                        <span style={{ opacity: 0.7, fontSize: ".78rem" }}>{formatScheduledFor(si.scheduledAt)}</span>
+                      </span>
+                      <span>{placedOrder.gift && placedOrder.gift.receipt ? "···" : format((si.priceValue || 0) * (si.qty || 1))}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
               {placedOrder.gift && placedOrder.gift.wrap ? (
                 <SummaryRow>
                   <span>Gift wrap</span>
