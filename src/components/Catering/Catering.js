@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import QuoteCalculator from "./QuoteCalculator";
 import {
   CaterSection,
   CaterInner,
@@ -56,6 +57,19 @@ const Catering = () => {
     return () => clearTimeout(t);
   }, [toast]);
 
+  useEffect(() => {
+    const onPrefill = (e) => {
+      const detail = e && e.detail ? e.detail : {};
+      setValues((p) => ({
+        ...p,
+        guests: detail.guests || p.guests,
+        message: detail.message || p.message,
+      }));
+    };
+    window.addEventListener("sd:catering-prefill", onPrefill);
+    return () => window.removeEventListener("sd:catering-prefill", onPrefill);
+  }, []);
+
   const set = (k) => (e) => setValues((p) => ({ ...p, [k]: e.target.value }));
 
   const submit = (e) => {
@@ -94,6 +108,7 @@ const Catering = () => {
         <p className="sub">
           Fiestas, birthdays, office merienda. 2 days lead time for bulk.
         </p>
+        <QuoteCalculator />
         <Grid>
           <Card as="form" onSubmit={submit} noValidate aria-label="Catering inquiry form">
             <Row2>
