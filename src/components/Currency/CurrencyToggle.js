@@ -17,10 +17,11 @@ const CurrencyToggle = () => {
             background: currency === c ? "#e3c987" : "transparent",
             color: currency === c ? "#111" : "#fff",
             fontWeight: currency === c ? 800 : 400,
-            padding: ".35rem .55rem",
+            padding: ".3rem .45rem",
             cursor: "pointer",
-            fontSize: ".78rem",
+            fontSize: ".72rem",
             whiteSpace: "nowrap",
+            minWidth: 28,
           }}
         >
           <span aria-hidden="true">{c === "PHP" ? "₱" : "$"}</span>

@@ -16,10 +16,11 @@ const ThemeToggle = () => {
         border: "1px solid rgba(255,255,255,.3)",
         background: isLight ? "#fff" : "transparent",
         color: isLight ? "#111" : "#fff",
-        width: 38,
-        height: 32,
+        width: 32,
+        height: 30,
         cursor: "pointer",
-        fontSize: "1rem",
+        fontSize: "0.95rem",
+        flexShrink: 0,
       }}
     >
       {isLight ? "☀️" : "🌙"}
